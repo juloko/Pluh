@@ -11,7 +11,7 @@
 
 > `Mutual excludable.`
 
-> `Have your private Chat [now](https://light-news.web.app/) !`
+> `Have your private Chat now!`
 
  
 ## Developer Stories:
