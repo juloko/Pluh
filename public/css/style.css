@@ -4,7 +4,7 @@
 }
 
 @font-face {
-  font-family: 'Aeonik Light';
+  font-family: 'Aeonik Light Italic';
   src:  url('../fonts/Aeonik-LightItalic.ttf');
 }
 
@@ -34,7 +34,7 @@ header{
 footer{
   font-size: 1rem;
   color: rgba(0, 0, 0, 0.699);
-  font-family: "Aeonik Light", italic !important;
+  font-family: "Aeonik Light Italic", italic !important;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -94,7 +94,7 @@ a{
   padding:  .5rem .5rem .5rem 1.5rem;
   border-radius: 30px;
   font-size: 1.4rem;
-  font-family: "Aeonik Light", italic !important;
+  font-family: "Aeonik Light Italic", italic !important;
   margin-right: 1rem;
   outline:none;
   caret-color: var(--main-color);
@@ -139,7 +139,7 @@ i{
   padding:  .5rem 0 0 1rem;
   border-radius: 30px;
   font-size: 1.4rem;
-  font-family: "Aeonik Light", italic !important;
+  font-family: "Aeonik Light",  !important;
   width: 30rem;
   height: 5rem;
   outline:none;
@@ -148,7 +148,7 @@ i{
 }
 
 #textChat textarea{
-  font-family: "Aeonik Light", italic !important;
+  font-family: "Aeonik Light",  !important;
   font-size: 1rem;
   color: #444444;
   outline:none;
@@ -175,7 +175,7 @@ i{
   padding:  .5rem .5rem .5rem .5rem;
   border-radius: 30px;
   font-size: 1.4rem;
-  font-family: "Aeonik Light", italic !important;
+  font-family: "Aeonik Light",  !important;
   height: 20rem;
   background-color: var(--terciary-color);
   caret-color: var(--main-color);
@@ -233,3 +233,26 @@ p.messageB{
   background-clip: padding-box;
 } */
 
+@media screen and (max-width: 768px) {
+  body{
+    height: 100%;
+  }
+
+  #logo{
+    margin-top: 5rem !important;
+    width: 20rem;
+  }
+
+  #inputChat{
+    margin-top: 5rem !important;
+  }
+
+  .item{
+    margin: auto !important;
+    display: table;
+  }
+
+  footer li{
+    margin: 0 1rem 0 1rem;
+  }
+}

@@ -1,8 +1,53 @@
-class Pluh{
+class Pluh {
     // this.backendUrl = 'https://us-central1-light-news.cloudfunctions.net/app/';
 
-    
+
 }
+
+var ssPreloader = () => {
+    return new Promise((resolve, reject) => {
+        $(window).on('load', () => {
+
+            // will first fade out the loading animation 
+            $("#loader").fadeOut("slow", () => {
+
+                // will fade out the whole DIV that covers the website.
+                resolve($("#preloader").delay(300).fadeOut("slow"))
+
+            });
+        });
+    })
+};
+
+
+retorna = ssPreloader()
+
+// .then(()=>{
+//     var typed4 = new Typed('#inputChat', {
+//         strings: [' In a universe of dots the public is private.', 'Mutual excludable.', '/your_secret_Chat!'],
+//         typeSpeed: 40,
+//         backSpeed: 0,
+//         attr: 'placeholder',
+//         bindInputFocusEvents: true,
+//         loop: false
+//     });
+// })
+
+var typed = () => {
+    new Typed('#inputChat', {
+        strings: ['', 'The public is private.', 'Your key is your brain.', 'Mutual excludable.', '/your_secret_Chat!'],
+        typeSpeed: 30,
+        backSpeed: 0,
+        attr: 'placeholder',
+        bindInputFocusEvents: true,
+        onComplete: () => { setTimeout(typed, 5000) }
+    })
+}
+
+typed();
+
+
+
 
 
 if (window.location.port === 5000) {
@@ -12,18 +57,6 @@ if (window.location.port === 5000) {
 
 let requisiting = false;
 let endNews = false;
-
-initNews()
-
-async function initNews() {
-    counterArticles = 0;
-    pageCursor = "";
-    animateDashboard("news/model.html")
-    lightOut();
-    while (counterArticles < 10) {
-        await getNews();
-    }
-}
 
 async function getNews() {
     try {
@@ -39,7 +72,6 @@ async function getNews() {
             requisiting = false
         }
     } catch (error) {
-        plotConsole(error)
         requisiting = false
     }
 }
