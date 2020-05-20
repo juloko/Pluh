@@ -9,15 +9,11 @@
 #### Have your private Chat now!
 
  
-### Great Achievals:
--  Obtain from user an URL with news.
--  Summarizing News with Artifical Inteligence;
--  Produce Key Words with Artifical Inteligence;
--  Referenciate the font;
--  <del>Use Facebook API to post this news on Instagram;<del> 
--  Catch from DB the last all news by (: scroll; 
--  Have a front end interface by an responsive web page to show the summarized news;
--  <del>Show ad-sense on the page;<del>  
--  <del>Catch from newsletter some updating from the pages;<del>  
--  Makes client save the summarizing in BD if was a sucess, new news and if was a known host;
+### Developer Stories:
+-  Build Frontend Web.
+-  <del>Build Frontend Responsive;<del>
+-  <del>Build Frontend Responsive;<del>
+-  Catch from DB the last 100 messages;
+-  Show status;
+-  <del>Create a token based in user computer and time and storage at local storage, if more than one in chat generate a radom flat beaty color;<del>
 
