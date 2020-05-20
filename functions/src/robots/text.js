@@ -1,11 +1,6 @@
 const credentials = require('../database/credentials.json');
 
-const googleTranslate = require("@vitalets/google-translate-api");
-const algorithmia = require("algorithmia")(credentials.algorithmiaKey);
-const axios = require('axios');
-
 const { readDebugPage, writeDebugPage } = require('../debug/debug');
-const fonts = require('../robots/fonts');
 
 
 const listFilter = require('../database/listFilter.json')
