@@ -5,7 +5,7 @@
 
 
 ## Mantra
-> `In a universe of dots the public its private.`
+> `In a universe of dots the public is private.`
 
 > `Your login its your brain.`
 
