@@ -1,0 +1,6 @@
+{
+    "gcloud": [
+        "gcloud app deploy index.yaml",
+        "gcloud datastore indexes cleanup index.yaml"
+    ]
+}

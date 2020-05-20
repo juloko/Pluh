@@ -1,0 +1,22 @@
+{
+    "short_name": "Pluh",
+    "name": "Pluh Message",
+    "description": "Provide an fast read about an news.",
+    "icons": [
+        {
+            "src": "images/logo.png",
+            "type": "image/png",
+            "sizes": "464x292"
+        },
+        {
+            "src": "images/favicon.png",
+            "type": "image/png",
+            "sizes": "126x133"
+        }
+    ],
+    "start_url": "/",
+    "background_color": "#e30063",
+    "display": "standalone",
+    "scope": "/",
+    "theme_color": "#e30063"
+}
