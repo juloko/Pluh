@@ -1,17 +1,17 @@
 # Light Pluh
 
-##[Demo!](https://light-news.web.app/) 
+## [Demo!](https://light-news.web.app/) 
 #### The idea it's provide an secret chat that hide everything if you go out or press a button.
 
 
-### Mantra
+## Mantra
 ##### In a universe of dots the public its private.
 ##### Your login its your brain.
 ##### Mutual excludable.
 ##### Have your private Chat now!
 
  
-### Developer Stories:
+## Developer Stories:
 -  Build Frontend Web.
 -  <del>Build Frontend Responsive;<del>
 -  <del>Build Frontend Responsive;<del>
