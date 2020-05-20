@@ -1,37 +1,39 @@
 class Pluh {
-    // this.backendUrl = 'https://us-central1-light-news.cloudfunctions.net/app/';
+    constructor() {
+        this.backendUrl = 'https://us-central1-light-news.cloudfunctions.net/app/';
 
+        this.registerHandlers();
+    }
 
+    registerHandlers() {
+        preLoader().then(() => alert())
+    }
+
+    preLoader() {
+        return new Promise((resolve, reject) => {
+            $(window).on('load', () => {
+                $("#loader").fadeOut("slow", () => {
+                    resolve($("#preloader").delay(300).fadeOut("slow"))
+                });
+            });
+        })
+    }
 }
 
-var ssPreloader = () => {
-    return new Promise((resolve, reject) => {
-        $(window).on('load', () => {
-
-            // will first fade out the loading animation 
-            $("#loader").fadeOut("slow", () => {
-
-                // will fade out the whole DIV that covers the website.
-                resolve($("#preloader").delay(300).fadeOut("slow"))
-
-            });
-        });
-    })
-};
+new Pluh
 
 
-retorna = ssPreloader()
+ssPreloader()
 
-// .then(()=>{
-//     var typed4 = new Typed('#inputChat', {
-//         strings: [' In a universe of dots the public is private.', 'Mutual excludable.', '/your_secret_Chat!'],
-//         typeSpeed: 40,
-//         backSpeed: 0,
-//         attr: 'placeholder',
-//         bindInputFocusEvents: true,
-//         loop: false
-//     });
-// })
+$("#openChat").click(() => {
+    let animation = "2s cubic-bezier(0.4, 0, 1, 1) 0.3s 1 normal backwards running goesChat"
+    $("#openChat").css('-moz-animation', animation)
+        .css('animation', animation)
+        .css('-webkit-animation', animation);
+    setTimeout(() => $("#findChat").hide(), 2300);
+    $("#windowChat").css('display', 'inline-block')
+})
+
 
 var typed = () => {
     new Typed('#inputChat', {
