@@ -8,6 +8,7 @@ class Pluh {
 
         this.window = $(window);
         this.page = $('html');
+        this.chat = $("#chat");
         this.wrapperChat = $("#wrapperChat");
         this.loader = $("#loader");
         this.preLoader = $("#preloader");
@@ -23,6 +24,9 @@ class Pluh {
         //Functions
         this.init();
         this.registerHandlers();
+
+        //Objects
+        this.api = initApi()
     }
 
     async init() {
@@ -40,11 +44,12 @@ class Pluh {
 
     registerHandlers() {
         this.inputChat.keypress(e => this.openChat(e));
-        this.typeChat.keypress(e => this.openChat(e));
+        this.typeChat.keypress(e => this.takeMsg(e));
         this.btnOpenChat.click(e => this.openChat(e));
         this.btnBack.click(() => this.back());
         this.btnDelete.click(() => this.delete());
-        this.btnSendMsg.click(e => this.sendMsg(e));
+        this.btnSendMsg.click(e => this.takeMsg(e));
+        this.wrapperChat.bind('DOMSubtreeModified', () => this.updateScroll())
     }
 
     loading() {
@@ -77,19 +82,17 @@ class Pluh {
     }
 
     openChat(e) {
-        console.log(e)
         if ((e.type == "click") || (e.type == "keypress" && e.which == 13)) {
-            let animation = "2s cubic-bezier(0.4, 0, 1, 1) 0.3s 1 normal backwards running goesChat"
+            let animation = `2s cubic-bezier(0.4, 0, 1, 1) 0.3s 1 normal backwards running goesChat`
             this.setAnimation(this.btnOpenChat, animation)
             let timedAnimation = setInterval(() => {
-                console.log(this.btnOpenChat.offset().left, this.window.width())
                 if (this.btnOpenChat.offset().left >= this.window.width()) {
                     clearInterval(timedAnimation)
                     this.findChat.hide()
                     this.setAnimation(this.btnOpenChat, '')
                     this.windowChat.css('display', 'inline-block')
                 }
-            }, 100);
+            }, 50);
         }
     }
 
@@ -160,69 +163,71 @@ class Pluh {
         window.close();
     }
 
-    sendMsg() {
+    takeMsg(e) {
         if ((e.type === "click") || (e.type === "keypress" && e.which === 13)) {
+            if (this.typeChat.val().replace(/ /g, '').length) {
+                let $message = $('<p></p>')
+                    .addClass("messageA")
+                    .html(this.typeChat.val())
+                this.wrapperChat.append($message)
+                this.typeChat.val('')
+            }
         }
     }
 
     setAnimation(self, animation) {
-        console.log(self)
         self.css('-moz-animation', animation)
             .css('animation', animation)
             .css('-webkit-animation', animation);
     }
+
+    updateScroll() {
+        let scrollNow = this.chat.scrollTop()
+        let scrollMax = this.chat[0].scrollHeight - this.chat[0].offsetHeight
+        let ratio = scrollNow / scrollMax
+        if (ratio > .85) {
+            this.chat.scrollTop(scrollMax)
+        }
+    }
+
+    initApi() {
+        return axios.create({
+            baseURL: this.backendUrl,
+            timeout: 500,
+            dataType: 'json',
+            crossDomain: true,
+            headers: {
+                Accept: 'application/json'
+            },
+        })
+    }
+
+    async sendMessage() {
+        let response = await this.api.post('/robotNews', {
+            someURl,
+            'lang': 'pt'
+        });
+    }
+
+    async  getMessages() {
+        try {
+            if (!requisiting && !endNews) {
+                requisiting = true;
+                let news = await getFromCloud('robotNews', 'GET', { pageCursor, nNews })
+                if (news[1].moreResults == "NO_MORE_RESULTS") {
+                    endNews = true;
+                }
+                postingNews(news)
+                nNews = nNews + nOldNews;
+                nOldNews = nNews - nOldNews;
+                requisiting = false
+            }
+        } catch (error) {
+            requisiting = false
+        }
+    }
+
 }
 
 new Pluh
 
-async function getNews() {
-    try {
-        if (!requisiting && !endNews) {
-            requisiting = true;
-            let news = await getFromCloud('robotNews', 'GET', { pageCursor, nNews })
-            if (news[1].moreResults == "NO_MORE_RESULTS") {
-                endNews = true;
-            }
-            postingNews(news)
-            nNews = nNews + nOldNews;
-            nOldNews = nNews - nOldNews;
-            requisiting = false
-        }
-    } catch (error) {
-        requisiting = false
-    }
-}
-
-async function cloudComputing(someURl) {
-    plotConsole(`Getting from: ${someURl}`)
-    try {
-        let postNews = await getFromCloud('robotNews', 'POST', { 'someURL': someURl, 'lang': 'pt' })
-        plotConsole(postNews);
-        initNews();
-    } catch (error) {
-        plotConsole(error)
-    }
-}
-
-async function getFromCloud(func, method, dataIn) {
-    let dataReturn;
-    await $.ajax({
-        'url': `${rootUrl}${func}`,
-        'dataType': "json",
-        'method': method,
-        'crossDomain': true,
-        'headers': {
-            'Accept': 'application/json'
-        },
-        'data': dataIn,
-        success: (data) => {
-            dataReturn = data;
-        },
-        error: (request, status, error) => {
-            plotConsole(status);
-            plotConsole(error);
-            plotConsole(request.responseText);
-        }
-    });
-    return dataReturn;
-}

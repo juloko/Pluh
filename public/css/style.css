@@ -54,8 +54,19 @@ button{
   background-color: transparent;
   border: none;
   outline: none;
-  cursor: pointer;
+  cursor: pointer !important;
   display: unset;
+}
+
+*, *::after, *::before {
+	-webkit-user-select: none;
+	-webkit-user-drag: none;
+	-webkit-app-region: no-drag;
+}
+
+
+button:hover{
+  color:var(--terciary-color) !important;
 }
 
 footer{
