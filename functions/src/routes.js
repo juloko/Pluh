@@ -1,35 +1,34 @@
 const express = require('express');
 const { celebrate, Segments, Joi } = require('celebrate')
 
-const NewsController = require('../src/controller/NewsController')
+const PluhController = require('../src/controller/PluhController')
 
 const routes = express.Router()
 
-routes.post("/robotNews", celebrate({
+routes.post("/pluh", celebrate({
     [Segments.BODY]:
         Joi.object().keys({
-            someURL: Joi.string().required().uri(),
-            lang: Joi.string().length(2)
+            chatId: Joi.string().required(),
+            userId: Joi.string().required(),
+            msg: Joi.string().required()
         })
-}), NewsController.create)
+}), PluhController.create)
 
-routes.post("/robotNews", NewsController.save)
-
-
-routes.get("/robotNews", celebrate({
+routes.get("/pluh", celebrate({
     [Segments.BODY]:
         Joi.object().keys({
             pageCursor: Joi.string(),
+            chatId: Joi.string().required(),
+            nMsgs: Joi.string().required(),
         })
-}), NewsController.index)
+}), PluhController.index)
 
-routes.delete("/robotNews", celebrate({
+routes.delete("/pluh", celebrate({
     [Segments.BODY]:
         Joi.object().keys({
-            news: Joi.string(),
-            font: Joi.string(),
+            chatId: Joi.string().required(),
         })
-}), NewsController.delete)
+}), PluhController.delete)
 
 
 module.exports = routes
