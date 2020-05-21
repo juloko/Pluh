@@ -50,6 +50,14 @@ header{
   
 }
 
+button{
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  display: unset;
+}
+
 footer{
   font-size: 1rem;
   color: rgba(0, 0, 0, 0.699);
@@ -128,7 +136,7 @@ i{
   position: relative;
 }
 
-  #openChat i{
+#openChat i{
   display: inline-block;
   vertical-align: sub;
 }
@@ -145,9 +153,18 @@ i{
   margin: 0 2rem;
 }
 
+button#delete{
+  display: contents;
+}
+
+button#delete{
+  display: contents;
+}
+
 #back i{
   float: left;
   font-size:1.5rem !important;
+  display: contents;
 }
 
 #delete i{
