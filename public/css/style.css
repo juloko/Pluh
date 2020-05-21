@@ -39,11 +39,18 @@
   --quintanary-color: #0ae;
   --sextenary-color: #e26fa1;
   --septenary-color: #e4458a;
+
+  --border-radius-one: 15px;
 }
 
 html {
   overflow-x: hidden;
   background-color: var(--main-color);
+}
+
+body{
+  margin: 0;
+  height: 100%;
 }
 
 header{
@@ -160,35 +167,34 @@ i{
 }
 
 .navIcons{
-  clear: both;
-  margin: 0 2rem;
+  text-align: center;
+  font-size: 1rem !important;
+
 }
 
-button#delete{
-  display: contents;
+.navIcons button{
+  display: inline;
 }
 
-button#delete{
-  display: contents;
+.navIcons i{
+font-size: 1.5rem;  
+}
+.navIcons i:hover{
+  color:var(--terciary-color)
 }
 
-#back i{
-  float: left;
-  font-size:1.5rem !important;
-  display: contents;
-}
 
-#delete i{
-  float: right;
-  font-size:1.5rem !important;
-}
 
+.navIcons #settings{
+  padding: 0 10rem;
+  height: 3rem;
+}
 
 #textChat{
-  margin: 1rem 0 0 0 ;
+  margin: .5rem 0 0 0 ;
   border:none;
   padding:  .5rem 0 0 1rem;
-  border-radius: 30px;
+  border-radius: var(--border-radius-one);
   font-size: 1.4rem;
   font-family: "Aeonik Light",  !important;
   width: 30rem;
@@ -218,16 +224,18 @@ button#delete{
   padding: .5rem;
 }
 
-#sendMsg i{
+#textChat i:hover{
+  color: var(--quintanary-color) !important;
 }
 
 #chat{
-  margin: 2rem 0 0 0 ;
+  position:   unset;
+  top: .5rem ;
   padding:  .5rem .5rem .5rem .5rem;
-  border-radius: 30px;
+  border-radius: var(--border-radius-one);
   font-size: 1.4rem;
   font-family: "Aeonik Light",  !important;
-  height: 20rem;
+  height: 23rem;
   background-color: var(--terciary-color);
   caret-color: var(--main-color);
   overflow-x:hidden;

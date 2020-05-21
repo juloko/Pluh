@@ -3,9 +3,10 @@ class Pluh {
         //Variables
         this.backendUrl = this.verifyMode();
         this.userId = this.setUser();
+        this.endMsg = false;
+        this.requisiting = false;
 
         //DOM Objects:
-
         this.window = $(window);
         this.page = $('html');
         this.chat = $("#chat");
@@ -20,13 +21,14 @@ class Pluh {
         this.btnBack = $("#back");
         this.btnDelete = $("#delete");
         this.btnSendMsg = $("#sendMsg");
+        this.newMsg = new $('<p></p>');
 
         //Functions
         this.init();
         this.registerHandlers();
 
         //Objects
-        this.api = initApi()
+        this.api = api()
     }
 
     async init() {
@@ -44,11 +46,11 @@ class Pluh {
 
     registerHandlers() {
         this.inputChat.keypress(e => this.openChat(e));
-        this.typeChat.keypress(e => this.takeMsg(e));
+        this.typeChat.keypress(e => this.aMsg(e));
         this.btnOpenChat.click(e => this.openChat(e));
         this.btnBack.click(() => this.back());
         this.btnDelete.click(() => this.delete());
-        this.btnSendMsg.click(e => this.takeMsg(e));
+        this.btnSendMsg.click(e => this.aMsg(e));
         this.wrapperChat.bind('DOMSubtreeModified', () => this.updateScroll())
     }
 
@@ -163,16 +165,23 @@ class Pluh {
         window.close();
     }
 
-    takeMsg(e) {
+    aMsg(e) {
         if ((e.type === "click") || (e.type === "keypress" && e.which === 13)) {
-            if (this.typeChat.val().replace(/ /g, '').length) {
-                let $message = $('<p></p>')
-                    .addClass("messageA")
-                    .html(this.typeChat.val())
-                this.wrapperChat.append($message)
-                this.typeChat.val('')
+            e.preventDefault()
+            let textMsg = this.typeChat.val()
+            if (textMsg.replace(/ /g, '').length) {
+                this.plotMsg(textMsg, 'A')
             }
         }
+    }
+
+    plotMsg(msg, type) {
+        let objMessage = $('<p></p>')
+            .addClass("message" + type)
+            .html(msg);
+        this.wrapperChat.append(objMessage);
+        this.typeChat.val('').blur()
+        this.typeChat.val('').blur().focus();
     }
 
     setAnimation(self, animation) {
@@ -209,24 +218,32 @@ class Pluh {
         });
     }
 
-    async  getMessages() {
-        try {
-            if (!requisiting && !endNews) {
-                requisiting = true;
-                let news = await getFromCloud('robotNews', 'GET', { pageCursor, nNews })
-                if (news[1].moreResults == "NO_MORE_RESULTS") {
-                    endNews = true;
-                }
-                postingNews(news)
-                nNews = nNews + nOldNews;
-                nOldNews = nNews - nOldNews;
-                requisiting = false
-            }
-        } catch (error) {
-            requisiting = false
-        }
+    setRequisiting(status) {
+        this.requisiting = status;
     }
 
+    setEndMsg(status) {
+        this.endMsg = status;
+    }
+
+    async  getMessages() {
+        try {
+            if (!this.requisiting && !this.endNews) {
+                setRequisiting(true)
+                let msgs = await this.api.post('/robotNews', {
+                    someURl,
+                    'lang': 'pt'
+                });
+                if (msgs[1].moreResults == "NO_MORE_RESULTS") {
+                    setEndMsg(true)
+                }
+                putMsg(msgs)
+                setRequisiting(false)
+            }
+        } catch (error) {
+            setRequisiting(false)
+        }
+    }
 }
 
 new Pluh
