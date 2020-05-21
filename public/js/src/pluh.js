@@ -162,7 +162,7 @@ class Pluh {
         this.wrapperChat.html('');
         this.page.html('');
         localStorage.clear();
-        window.close();
+        whis.window.location = 'www.google.com';
     }
 
     aMsg(e) {
@@ -205,8 +205,11 @@ class Pluh {
             timeout: 500,
             dataType: 'json',
             crossDomain: true,
+            cache: 'reload',
+            credentials: 'include',
             headers: {
-                Accept: 'application/json'
+                'Accept': 'application/json',
+                'Forced- Revalidate': 1,
             },
         })
     }
