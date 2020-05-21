@@ -1,6 +1,6 @@
-# Light Pluh
+# Pluh
 
-## [Demo!](https://light-news.web.app/) 
+## [Demo!](https://pluhmessage.web.app/) 
 #### The idea it's provide an secret chat that hide everything if you go out or press a button.
 
 
