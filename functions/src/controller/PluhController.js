@@ -10,19 +10,19 @@ const datastore = new Datastore({
 module.exports = {
     async create(req, res, next) {
         //Get from user.
-        const { chatId, userId, msg } = req.body || req.query;
-
+        const { chatId, userId, msg, timestamp = new Date() } = req.body || req.query;
+        console.log(chatId)
         //Bundle information.
         let bundle = {
             chatId,
             userId,
             msg,
-            'timestamp': new Date(),
+            timestamp,
         }
 
         try {
             const response = await datastore.save({
-                key: datastore.key(['Chat', chatId]),
+                key: datastore.key([chatId]),
                 data: bundle,
                 excludeFromIndexes: [
                     'msg'
@@ -36,32 +36,42 @@ module.exports = {
     },
 
     async index(req, res, next) {
-        const { pageCursor, chatId, nMsgs } = req.query || req.body
+        const { pageCursor, chatId, nMsgs } = req.body || req.query;
         try {
-            let query = datastore.createQuery('Chat', chatId)
-                .start(pageCursor)
+            const [resp] = await datastore.get(datastore.key(['Delete', chatId]));
+            let timestamp
+            resp ? timestamp = resp.timestamp : timestamp = new Date('1990-01-01T00:00:00z')
+            
+            const query = datastore.createQuery(chatId)
+                // .start(pageCursor)
                 .order('timestamp', {
                     descending: true,
                 })
+                .filter('timestamp', '>', timestamp)
                 .limit(nMsgs)
 
-            const response = await datastore.runQuery(query);
+                const response = await datastore.runQuery(query);
+            res.header('Accept-Datetime', timestamp);
             res.send(response)
         } catch (err) {
+            console.log('error')
             res.send(err)
         }
     },
 
     async delete(req, res, next) {
-        const { chatId } = req.query || req.body
-        const taskKey = datastore.key(['News', chatId]);
+        const { chatId } = req.body
         try {
-            const response = await datastore.delete(taskKey);
+            const response = await datastore.save({
+                key: datastore.key(['Delete', chatId]),
+                data: { 'timestamp': new Date() },
+            });
+            
             res.send(response)
-
         } catch (err) {
+            console.error('ERROR:', err);
             res.send(err)
         }
-        res.send(response);
     },
+
 }

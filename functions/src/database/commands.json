@@ -1,6 +1,9 @@
 {
     "gcloud": [
         "gcloud app deploy index.yaml",
-        "gcloud datastore indexes cleanup index.yaml"
+        "gcloud datastore indexes cleanup index.yaml",
+        "gcloud auth application-default login",
+        "gcloud config set project pluhmessage"
+
     ]
 }

@@ -1,13 +1,16 @@
 indexes:
 
-- kind: Font
+- kind: Chat
   properties:
   - name: timestamp
     direction: desc 
-  - name: hashtags
-  - name: host
-  - name: imgNews.alt
-  - name: imgNews.src
-  - name: summary
-  - name: url
+  - name: chatId
+  - name: userId
+  - name: msg
+
+- kind: Chat
+  properties:
+    - name: chatId
+    - name: timestamp
+      direction: desc
   
