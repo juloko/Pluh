@@ -10,8 +10,7 @@ const datastore = new Datastore({
 module.exports = {
     async create(req, res, next) {
         //Get from user.
-        const { chatId, userId, msg, timestamp = new Date() } = req.body || req.query;
-        console.log(chatId)
+        const { chatId, userId, msg, timestamp = new Date() } = req.body;
         //Bundle information.
         let bundle = {
             chatId,
@@ -36,12 +35,15 @@ module.exports = {
     },
 
     async index(req, res, next) {
-        const { pageCursor, chatId, nMsgs } = req.body || req.query;
+        const { pageCursor, chatId, nMsgs } = req.query;
+        console.log(pageCursor)
+        console.log(chatId)
+        console.log(nMsgs)
         try {
             const [resp] = await datastore.get(datastore.key(['Delete', chatId]));
             let timestamp
             resp ? timestamp = resp.timestamp : timestamp = new Date('1990-01-01T00:00:00z')
-            
+
             const query = datastore.createQuery(chatId)
                 // .start(pageCursor)
                 .order('timestamp', {
@@ -50,7 +52,7 @@ module.exports = {
                 .filter('timestamp', '>', timestamp)
                 .limit(nMsgs)
 
-                const response = await datastore.runQuery(query);
+            const response = await datastore.runQuery(query);
             res.header('Accept-Datetime', timestamp);
             res.send(response)
         } catch (err) {
@@ -66,7 +68,7 @@ module.exports = {
                 key: datastore.key(['Delete', chatId]),
                 data: { 'timestamp': new Date() },
             });
-            
+
             res.send(response)
         } catch (err) {
             console.error('ERROR:', err);

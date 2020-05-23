@@ -200,7 +200,7 @@ box-shadow:  -17px -17px 33px #c10054, 17px 17px 33px #ff0072;
   padding:  .5rem 0 0 1rem;
   border-radius: var(--border-radius-one);
   font-size: 1.4rem;
-  font-family: "Aeonik Light",  !important;
+  font-family: "Aeonik Light", sans-serif !important;
   width: 30rem;
   height: 5rem;
   outline:none;
@@ -211,7 +211,7 @@ box-shadow:  -17px -17px 33px #c10054, 17px 17px 33px #ff0072;
 }
 
 #textChat textarea{
-  font-family: "Aeonik Light",  !important;
+  font-family: "Aeonik Light Italic", italic  !important;
   font-size: 1rem;
   color: #444444;
   outline:none;

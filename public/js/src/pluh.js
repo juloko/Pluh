@@ -1,10 +1,17 @@
 class Pluh {
     constructor() {
+        //Contants
+        this.animationLogin = `2s cubic-bezier(0.4, 0, 1, 1) 0.3s 1 normal backwards running goesChat`
+
+
         //Variables
         this.backendUrl = this.verifyMode();
         this.userId = this.setUser();
+        this.chatId;
+        this.pageCursos = ""
         this.endMsg = false;
         this.requisiting = false;
+
 
         //DOM Objects:
         this.window = $(window);
@@ -21,14 +28,13 @@ class Pluh {
         this.btnBack = $("#back");
         this.btnDelete = $("#delete");
         this.btnSendMsg = $("#sendMsg");
-        this.newMsg = new $('<p></p>');
 
         //Functions
         this.init();
         this.registerHandlers();
 
         //Objects
-        this.api = api()
+        this.api = this.initApi()
     }
 
     async init() {
@@ -76,23 +82,43 @@ class Pluh {
     }
 
     verifyMode() {
-        if (window.location.port === 5000) {
-            return 'http://localhost:5001/';
+        if (window.location.port == 5000) {
+            return 'http://localhost:5001/pluhmessage/us-central1/app/';
         } else {
-            return 'https://us-central1-light-news.cloudfunctions.net/app/';
+            return 'https://us-central1-pluhmessage.cloudfunctions.net/app';
         }
+    }
+
+    initChat() {
+        this.setAnimation(this.btnOpenChat, this.animationLogin);
+        let nameChat = this.inputChat.val();
+        if (nameChat.replace(/ /g, '').length) {
+            this.chatId = nameChat;
+
+        } else {
+            this.inputChat.val('').blur().focus();
+        }
+    }
+
+    hideNameChatShowChat() {
+        this.findChat.hide()
+        this.inputChat.val('').blur().focus();
+        this.setAnimation(this.btnOpenChat, '')
+        this.windowChat.css('display', 'inline-block')
+    }
+
+    async initOldMessages() {
+        await this.getMessage(5);
     }
 
     openChat(e) {
         if ((e.type == "click") || (e.type == "keypress" && e.which == 13)) {
-            let animation = `2s cubic-bezier(0.4, 0, 1, 1) 0.3s 1 normal backwards running goesChat`
-            this.setAnimation(this.btnOpenChat, animation)
+            this.initChat();
             let timedAnimation = setInterval(() => {
                 if (this.btnOpenChat.offset().left >= this.window.width()) {
-                    clearInterval(timedAnimation)
-                    this.findChat.hide()
-                    this.setAnimation(this.btnOpenChat, '')
-                    this.windowChat.css('display', 'inline-block')
+                    clearInterval(timedAnimation);
+                    this.hideNameChatShowChat();
+                    this.initOldMessages();
                 }
             }, 50);
         }
@@ -162,15 +188,23 @@ class Pluh {
         this.wrapperChat.html('');
         this.page.html('');
         localStorage.clear();
-        whis.window.location = 'www.google.com';
+        this.deleteMessage().then(() => {
+            this.window.location = 'www.google.com';
+        })
     }
 
-    aMsg(e) {
+    async aMsg(e) {
         if ((e.type === "click") || (e.type === "keypress" && e.which === 13)) {
             e.preventDefault()
             let textMsg = this.typeChat.val()
             if (textMsg.replace(/ /g, '').length) {
                 this.plotMsg(textMsg, 'A')
+                this.postMessage(textMsg).then(
+
+                )
+                    .catch(
+
+                    )
             }
         }
     }
@@ -180,7 +214,6 @@ class Pluh {
             .addClass("message" + type)
             .html(msg);
         this.wrapperChat.append(objMessage);
-        this.typeChat.val('').blur()
         this.typeChat.val('').blur().focus();
     }
 
@@ -202,22 +235,30 @@ class Pluh {
     initApi() {
         return axios.create({
             baseURL: this.backendUrl,
-            timeout: 500,
-            dataType: 'json',
-            crossDomain: true,
-            cache: 'reload',
-            credentials: 'include',
-            headers: {
-                'Accept': 'application/json',
-                'Forced- Revalidate': 1,
-            },
         })
     }
 
-    async sendMessage() {
-        let response = await this.api.post('/robotNews', {
-            someURl,
-            'lang': 'pt'
+    async postMessage(msg) {
+        return await this.api.post('/pluh', {
+            "chatId": this.chatId,
+            "userId": this.userId,
+            msg
+        });
+    }
+
+    async getMessage(nMsgs) {
+        return await this.api.get('/pluh', {
+            params: {
+                "pageCursor": this.pageCursor,
+                "chatId": this.chatId,
+                nMsgs
+            }
+        });
+    }
+
+    async deleteMessage() {
+        return await this.api.delete('/pluh', {
+            "chatId": this.chatId,
         });
     }
 
@@ -250,4 +291,3 @@ class Pluh {
 }
 
 new Pluh
-
