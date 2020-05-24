@@ -5,7 +5,7 @@ class Pluh {
 
 
         //Variables
-        this.backendUrl = this.verifyMode();
+        this.backendUrl;
         this.userId = this.setUser();
         this.chatId;
         this.pageCursos = ""
@@ -39,6 +39,7 @@ class Pluh {
 
     async init() {
         await this.loading();
+        await this.verifyMode()
         this.typed('#inputChat',
             [
                 '',
@@ -81,11 +82,19 @@ class Pluh {
         })
     }
 
-    verifyMode() {
-        if (window.location.port == 5000) {
-            return 'http://localhost:5001/pluhmessage/us-central1/app/';
-        } else {
-            return 'https://us-central1-pluhmessage.cloudfunctions.net/app';
+    async verifyMode() {
+        try {
+            const response = await axios({
+                method: 'PUT',
+                url: `http://localhost:5001/pluhmessage/us-central1/app/pluh`,
+
+            });
+        } catch (err) {
+            if (err.message == "Request failed with status code 404") {
+                this.backendUrl = 'http://localhost:5001/pluhmessage/us-central1/app/';
+            } else {
+                this.backendUrl = 'https://us-central1-pluhmessage.cloudfunctions.net/app';
+            }
         }
     }
 
@@ -104,11 +113,18 @@ class Pluh {
         this.findChat.hide()
         this.inputChat.val('').blur().focus();
         this.setAnimation(this.btnOpenChat, '')
-        this.windowChat.css('display', 'inline-block')
+        this.windowChat.css('display', 'flex')
     }
 
     async initOldMessages() {
-        await this.getMessage(5);
+        const { data } = await this.getMessage(5);
+
+        const arr = data[0];
+        // arr.forEach((ele, ) => {
+        //     console.log(ele);
+        //     // this.plotMsg(i.msg, 'A')
+        // }.bind(this))
+
     }
 
     openChat(e) {

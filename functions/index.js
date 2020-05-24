@@ -1,6 +1,7 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const express = require('express');
+const developer = express();
 const cors = require('cors');
 const { errors } = require('celebrate')
 
@@ -13,9 +14,20 @@ admin.initializeApp(functions.config().firebase);
 admin.firestore().settings({ timestampsInSnapshots: true });
 
 // Automatically allow cross-origin requests
-app.use(cors(
-    // origin: ''
-));
+app.use(cors({
+    // credentials: true,
+    // origin: true
+}));
+
+// Automatically allow cross-origin for local host.
+app.put((req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Credentials', 'true'); // vital
+    res.set('Access-Control-Allow-Methods', 'PUT','GET', 'POST', 'DELETE');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
+    res.set('Access-Control-Max-Age', '3600');
+});
+
 
 //Routers requires and calls.
 app.use(express.json())

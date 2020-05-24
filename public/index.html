@@ -50,140 +50,123 @@
 
 <body>
 	<div id="app">
-		<img class="item" src="images/logo.png" id="logo" onselectstart="return false;" onmousedown="return false;">
-		</img>
+		<div class="firstPage">
+			<img class="item" src="images/logo.png" id="logo" onselectstart="return false;" onmousedown="return false;">
+			</img>
 
-		<div id="findChat" class="item">
-			<input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text"
-				class="form-control" id="inputChat" placeholder="/your_secret_Chat!">
-			<button id="openChat"><i class="fab fa-rocketchat"></i></button>
-		</div>
-
-		<div id="windowChat">
-			<div class="navIcons">
-				<button id="back"><i class="fas fa-undo-alt"></i></button>
-				<button id="settings"><i class="fas fa-cogs"></i></button>
-				<button id="delete"><i class="fas fa-trash"></i></button>
+			<div id="findChat" class="item">
+				<input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text"
+					class="form-control" id="inputChat" placeholder="/your_secret_Chat!">
+				<button id="openChat"><i class="fab fa-rocketchat"></i></button>
 			</div>
-			<div class="neumorphism">
-			<div id="chat">
-				<div id="wrapperChat">
-					<p class="messageA">Olá</p>
-					<p class="messageB">Oie</p>
-					<p class="messageA">Como você está, minha gatinha?
-						info There appears to be trouble with your network connection. Retrying...
-						info There appears to be trouble with your network connection. Retrying...
-						info There appears to be trouble with your network connection. Retrying...
-						info There appears to be trouble with your network connection. Retrying...
-					</p>
-					<p class="messageB">bem...</p>
-					<p class="messageA">Olá</p>
-					<p class="messageB">Oie</p>
-					<p class="messageA">Como você está, minha gatinha?</p>
-					<p class="messageB">bem...</p>
-					<p class="messageA">Olá</p>
-					<p class="messageB">Oie</p>
-					<p class="messageA">Como você está, minha gatinha?</p>
-					<p class="messageB">bem...</p>
-					<p class="messageA">Olá</p>
-					<p class="messageB">Oie</p>
-					<p class="messageA">Como você está, minha gatinha?</p>
-					<p class="messageB">bem...</p>
-					<p class="messageA">Olá</p>
-					<p class="messageB">Oie</p>
-					<p class="messageA">Como você está, minha gatinha?</p>
-					<p class="messageB">bem...</p>
-					<p class="messageA">Olá</p>
-					<p class="messageB">Oie</p>
-					<p class="messageA">Como você está, minha gatinha?</p>
-					<p class="messageB">bem...</p>
-					<p class="messageA">Olá</p>
-					<p class="messageB">Oie</p>
-					<p class="messageA">Como você está, minha gatinha?</p>
-					<p class="messageB">bem...</p>
-					<p class="messageA">Olá</p>
-					<p class="messageB">Oie</p>
-					<p class="messageA">Como você está, minha gatinha?</p>
-					<p class="messageB">bem...</p>
-					<p class="messageA">Olá</p>
-					<p class="messageB">Oie</p>
-					<p class="messageB">Oie</p>
-					<p class="messageB">Oie</p>
-					<p class="messageB">Oie</p>
-					<p class="messageA">Como você está, minha gatinha?</p>
-					<p class="messageA">Como você está, minha gatinha?</p>
-					<p class="messageA">Como você está, minha gatinha?</p>
-					<p class="messageA">Como você está, minha gatinha?</p>
-					<p class="messageB">bem...</p>
+		</div>
+		<div class="secondPage">
+			<div id="windowChat">
+				<div class="navIcons">
+					<button id="back"><i class="fas fa-undo-alt"></i></button>
+					<button id="settings"><i class="fas fa-cogs"></i></button>
+					<button id="delete"><i class="fas fa-trash"></i></button>
+				</div>
+				<div id="chat">
+					<div id="wrapperChat">
+						<p class="messageA">Olá</p>
+						<p class="messageB">Oie</p>
+						<p class="messageA">Como você está, minha gatinha?info There appears to be trouble with your
+							network connection. Retrying...info There appears to be trouble with your network
+							connection. Retrying...
+							info There appears to be trouble with your network connection. Retrying...
+							info There appears to be trouble with your network connection. Retrying...
+						</p>
+						<p class="messageB">bem...</p>
+						<p class="messageA">Olá</p>
+						<p class="messageB">Oie</p>
+						<p class="messageA">Como você está, minha gatinha?</p>
+
+						<p class="messageB">Oie</p>
+						<p class="messageB">Oie</p>
+						<p class="messageB">Oie</p>
+						<p class="messageB">Oie</p>
+						<p class="messageA">Como você está, minha gatinha?</p>
+						<p class="messageA">Como você está, minha gatinha?</p>
+						<p class="messageA">Como você está, minha gatinha?</p>
+						<p class="messageA">Como você está, minha gatinha?</p>
+						<p class="messageB">bem...</p>
+						<p class="messageA">Como você está, minha gatinha?info There appears to be trouble with your
+							network connection. Retrying...info There appears to be trouble with your network
+							connection. Retrying...
+							info There appears to be trouble with your network connection. Retrying...
+							info There appears to be trouble with your network connection. Retrying...
+						</p>
+					</div>
+				</div>
+				<div id="textChat">
+					<div class="fieldType copyable-text selectable-text" contenteditable="true" data-tab="1" dir="ltr"
+						spellcheck="true"></div>
+					<button id="sendMsg"><i class="fas fa-paper-plane"></i></button>
 				</div>
 			</div>
-			<div id="textChat">
-				<textarea class="item" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-					type="text" id="typeChat" placeholder="Type some secret message..."></textarea>
-				<button id="sendMsg"><i class="fas fa-paper-plane"></i></button>
-			</div>
 		</div>
-		</div>
+	</div>
 
-		<footer>
-			<p>
-				<small> Developed in Quarantine of 2020 | Julio Lima | Rights Not
-					Reserved.</small>
-			</p>
-			<ul>
-				<li>
-					<a target="_blank" href="https://www.instagram.com/julio.flima/">
-						<i class="fab fa-instagram"></i>
-					</a>
-				</li>
-				<li>
-					<a target="_blank" href="https://www.facebook.com/julioflima">
-						<i class="fab fa-facebook-f"></i>
-					</a>
-				</li>
-				<li>
-					<a target="_blank" href="https://www.linkedin.com/in/julioflima/">
-						<i class="fab fa-linkedin-in"> </i>
-					</a>
-				</li>
-				<li>
-					<a target="_blank" href="https://github.com/juloko">
-						<i class="fab fa-github-alt"></i>
-					</a>
-				</li>
-				<li>
-					<a target="_blank" href="tel:+5585998614541">
-						<i class="fab fa-whatsapp"></i>
-					</a>
-				</li>
-				<li>
-					<a target="_blank" href="mailto:julio_flima@hotmail.com?subject=Hi, I've been seen Light News">
-						<i class="far fa-envelope"></i>
-					</a>
-				</li>
-				<li>
-					<a target="_blank" href="https://goo.gl/maps/dExy3wE2tvCFJbzt6">
-						<i class="fa fa-map-marked-alt"></i>
-					</a>
-				</li>
-			</ul>
-			</p>
-		</footer>
+	<footer>
+		<p>
+			<small> Developed in Quarantine of 2020 | Julio Lima | Rights Not
+				Reserved.</small>
+		</p>
+		<ul>
+			<li>
+				<a target="_blank" href="https://www.instagram.com/julio.flima/">
+					<i class="fab fa-instagram"></i>
+				</a>
+			</li>
+			<li>
+				<a target="_blank" href="https://www.facebook.com/julioflima">
+					<i class="fab fa-facebook-f"></i>
+				</a>
+			</li>
+			<li>
+				<a target="_blank" href="https://www.linkedin.com/in/julioflima/">
+					<i class="fab fa-linkedin-in"> </i>
+				</a>
+			</li>
+			<li>
+				<a target="_blank" href="https://github.com/juloko">
+					<i class="fab fa-github-alt"></i>
+				</a>
+			</li>
+			<li>
+				<a target="_blank" href="tel:+5585998614541">
+					<i class="fab fa-whatsapp"></i>
+				</a>
+			</li>
+			<li>
+				<a target="_blank" href="mailto:julio_flima@hotmail.com?subject=Hi, I've been seen Light News">
+					<i class="far fa-envelope"></i>
+				</a>
+			</li>
+			<li>
+				<a target="_blank" href="https://goo.gl/maps/dExy3wE2tvCFJbzt6">
+					<i class="fa fa-map-marked-alt"></i>
+				</a>
+			</li>
+		</ul>
+		</p>
+	</footer>
 
-		<div class="gototop js-top">
-			<a href="#" class="js-gotop"><i class="icon-arrow-up"></i></a>
-		</div>
-		<!-- SCRIPT -->
-		<!-- jQuery -->
-		<script src="js/plugins/jquery.min.js"></script>
-		<!-- Mobile Check -->
-		<script src="js/plugins/mobileCheck.js"></script>
-		<!-- Typed -->
-		<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11"></script>
-		<!-- Axios -->
-		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-		<!-- Main Pluh -->
-		<script src="js/src/pluh.js"></script>
+	<div class="gototop js-top">
+		<a href="#" class="js-gotop"><i class="icon-arrow-up"></i></a>
+	</div>
+	<!-- SCRIPT -->
+	<!-- jQuery -->
+	<script src="js/plugins/jquery.min.js"></script>
+	<!-- Mobile Check -->
+	<script src="js/plugins/mobileCheck.js"></script>
+	<!-- Typed -->
+	<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11"></script>
+	<!-- Axios -->
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<!-- Main Pluh -->
+	<script src="js/src/pluh.js"></script>
 </body>
 
 </html>
