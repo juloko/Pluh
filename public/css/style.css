@@ -346,6 +346,10 @@ i{
   color: var(--quintanary-color) !important;
 }
 
+[contentEditable=true]:empty:not(:focus):before{
+  content:attr(data-text)
+}
+
 #chat{
   flex: 1 2 0;
   order: 2;
