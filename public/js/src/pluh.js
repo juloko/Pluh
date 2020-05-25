@@ -61,7 +61,7 @@ class Pluh {
         this.btnDelete.click(() => this.delete());
         this.btnSendMsg.click(e => this.aMsg(e));
         this.chat.bind('DOMSubtreeModified', () => this.updateScroll());
-
+        this.chat.scroll(() => this.scrollUp());
     }
 
     loading() {
@@ -100,17 +100,6 @@ class Pluh {
         }
     }
 
-    initChat() {
-        this.setAnimation(this.btnOpenChat, this.animationLogin);
-        let nameChat = this.inputChat.val();
-        if (nameChat.replace(/ /g, '').length) {
-            this.chatId = nameChat;
-
-        } else {
-            this.inputChat.val('').blur().focus();
-        }
-    }
-
     hideNameChatShowChat() {
         this.findChat.hide()
         this.inputChat.val('').blur()
@@ -123,10 +112,15 @@ class Pluh {
 
     async initOldMessages(chatId) {
         this.chatId = chatId;
-        const msgs = await this.getMessage(10);
+        await this.getPlotMessages(10);
         this.hideNameChatShowChat();
+
+    }
+
+    async getPlotMessages(nMsgs) {
+        const msgs = await this.getMessages(nMsgs);
         if (msgs) {
-            msgs.forEach((ele, ) => {
+            msgs.forEach((ele) => {
                 this.plotReceivedMsg(ele.msg, ele.timestamp, 'A')
             })
             this.downScroll();
@@ -202,8 +196,7 @@ class Pluh {
         let foundUser = localStorage.getItem('userId');
         if (foundUser) {
             return foundUser;
-        }
-        else {
+        } else {
             let infoUser = this.userData();
             let stringInfo = JSON.stringify(infoUser)
             let userId = this.hash(stringInfo);
@@ -214,6 +207,7 @@ class Pluh {
 
     back() {
         this.windowChat.css('display', 'none');
+        this.windowChat.css('display', 'none');
         this.chat.html('');
         this.findChat.show();
         this.sideA.show();
@@ -223,11 +217,11 @@ class Pluh {
     delete() {
         this.chat.html('');
         localStorage.clear();
-        this.deleteMessage().then(() => {
-            this.page.html('');
-            window.location.replace("http://www.google.com")
-        })
-            .catch(() => {
+        this.deleteMessage()
+            .then(() => {
+                this.page.html('');
+                window.location.replace("http://www.google.com")
+            }).catch(() => {
                 this.delete()
             })
     }
@@ -238,37 +232,37 @@ class Pluh {
     }
 
     tryMsg(textMsg) {
-        let msgId = this.plotUserMsg(textMsg, 'A')
-        this.downScroll();
-        this.postMessage(textMsg).then((data) => {
-            if (!data.data[0].mutationResults[0].conflictDetected) {
-                $("#" + msgId).find('i').removeClass("fas fa-hourglass-start").addClass("fas fa-hourglass-end");
-            }
-            else {
-                throw Error(data)
-            }
-        }).catch(() => {
-            let retry = $('<i></i>')
-                .addClass('retry')
-                .addClass('fas fa-undo-alt');
+        let msgId = this.plotUserMsg(textMsg, 'A');
+        this.postMessage(textMsg)
+            .then((data) => {
+                if (!data.data[0].mutationResults[0].conflictDetected) {
+                    $("#" + msgId).find('i').removeClass("fas fa-hourglass-start").addClass("fas fa-hourglass-end");
+                } else {
+                    throw Error(data);
+                }
+            }).catch(() => {
+                let retry = $('<i></i>')
+                    .addClass('retry')
+                    .addClass('fas fa-undo-alt');
 
-            let btn = $('<button></button>')
-                .append(retry);
+                let btn = $('<button></button>')
+                    .append(retry);
 
-            $("#" + msgId)
-                .css('box-shadow', '-4px 4px 4px #ff4aa68c, -4px -4px 4px #ffffff')
-                .append(btn);
+                $("#" + msgId)
+                    .css('box-shadow', '-4px 4px 4px #ff4aa68c, -4px -4px 4px #ffffff')
+                    .append(btn);
 
-            this.updateRetryListener()
-        })
+                this.updateRetryListener();
+            })
     }
 
     async aMsg(e) {
         if ((e.type === "click") || (e.type === "keypress" && e.which === 13 && !e.shiftKey)) {
-            e.preventDefault()
-            let textMsg = this.typeChat.html()
+            e.preventDefault();
+            let textMsg = this.typeChat.html();
             if (textMsg.replace(/ /g, '').length) {
-                this.tryMsg(textMsg)
+                this.tryMsg(textMsg);
+                this.downScroll();
             }
         }
     }
@@ -277,9 +271,10 @@ class Pluh {
         e.stopPropagation();
         e.stopImmediatePropagation();
         let id = e.originalEvent.path[2].getAttribute('id');
-        let textMsg = $('#'+id).contents().first().text();
-        $('#'+id).remove();
+        let textMsg = $('#' + id).contents().first().text();
+        $('#' + id).remove();
         this.tryMsg(textMsg)
+        this.downScroll();
     }
 
     structureMsg(msg, timestamp, type, icon) {
@@ -327,21 +322,27 @@ class Pluh {
             .css('-webkit-animation', animation);
     }
 
-    updateScroll() {
+
+    scroll() {
         let scrollNow = this.chat.scrollTop()
         let scrollMax = this.chat[0].scrollHeight - this.chat[0].offsetHeight
         let ratio = scrollNow / scrollMax
-        if (ratio > .65) {
+        return { scrollNow, scrollMax, ratio }
+    }
+
+    scrollUp() {
+        console.log(this.scroll().ratio)
+    }
+
+
+    updateScroll() {
+        if (this.scroll().ratio > .65)
             this.chat.scrollTop(scrollMax)
-        }
     }
 
     downScroll() {
-        let scrollMax = this.chat[0].scrollHeight - this.chat[0].offsetHeight
-        this.chat.scrollTop(scrollMax)
+        this.chat.scrollTop(this.scroll().scrollMax)
     }
-
-
 
     initApi() {
         return axios.create({
@@ -383,7 +384,7 @@ class Pluh {
         })
     }
 
-    async  getMessage(nMsgs) {
+    async  getMessages(nMsgs) {
         try {
             if (!this.requisiting) {
                 this.setRequisiting(true)
@@ -402,10 +403,10 @@ class Pluh {
                 } else if (msgs.data.code == 13) {
                     await this.delay(2);
                     this.setRequisiting(false)
-                    return await this.getMessage(nMsgs);
+                    return await this.getMessages(nMsgs);
                 } else {
                     this.setRequisiting(false)
-                    alert("Unknown error");
+                    alert("Unexpected error");
                 }
             }
         } catch (error) {
