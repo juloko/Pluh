@@ -17,10 +17,14 @@
 ## Developer Stories:
 -  Build Frontend Web.
 -  Build Frontend Responsive;
--  <del>Catch from DB the last 10 messages;<del>
--  <del>Show status;<del>
 -  Create a token based in user computer and time and storage at local storage;
--  <del>If more than one in chat generate a random flat beauty color;<del>
+-  Catch from DB the last 10 messages;
 -  If delete button was pressed, delete all in frontend and backend;
- 
-
+-  Add icon to monitor sended messages;
+-  Add favicon .ico;
+-  Add retry to send message;
+-  <del>Catch from DB the last messages by scroll using page cursor;<del>
+-  <del>Add pooling of messages;<del>
+-  <del>If more than one in chat generate a random flat beauty color;<del>
+-  <del>Add logic to choice user A and B and more;<del>
+-  <del>Show status;<del>
