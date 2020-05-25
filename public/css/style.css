@@ -92,6 +92,25 @@ html {
   background: linear-gradient(315deg, #cc0059, #f3006a);
 }
 
+p span {
+  font-size: .7rem;
+  display: contents;
+  margin: 1rem 0 0 .5rem;
+  float: right;
+}
+
+.timeMsg {
+  display: flex;
+}
+
+.timeMsg i{
+  color:var(--septenary-color);
+  font-size:.5rem;
+  position: relative;
+  bottom: -.2rem;
+  left: .5rem;
+}
+
 body{
   margin: 0;
 }
@@ -349,7 +368,7 @@ i{
 
 #chat p{
   margin: .25rem;
-  padding: .8rem;
+  padding: .8rem 1.2rem .2rem .8rem;
   font-family: "Aeonik Light", sans-serif !important;
   font-size: 1rem;
   clear: both;

@@ -3,7 +3,7 @@
 class Pluh {
     constructor() {
         //Contants
-        this.animationLogin = `2s cubic-bezier(0.4, 0, 1, 1) 0.3s 1 normal backwards running goesChat`
+        this.animationLogin = `10s cubic-bezier(0, -0.02, 0, 1.71) 0.3s 1 normal backwards running goesChat`
         this.animationShake = `2s   1 normal backwards running shake`
 
         //Variables
@@ -128,9 +128,9 @@ class Pluh {
         this.hideNameChatShowChat();
         if (msgs) {
             msgs.forEach((ele, ) => {
-                this.plotReceivedMsg(ele.msg, 'A')
+                this.plotReceivedMsg(ele.msg, ele.timestamp, 'A')
             })
-            this.updateScroll();
+            this.downScroll();
         }
     }
 
@@ -243,18 +243,33 @@ class Pluh {
         }
     }
 
+    structureMsg(msg, timestamp, type) {
+        let main = $('<p></p>')
+            .addClass("message" + type)
+            .html(msg)
+
+        let time = $('<span></span>')
+            .html(new Date(timestamp).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }).replace(' ', ''))
+
+        let status = $('<i></i>')
+            .addClass('fas fa-hourglass-start')
+
+        let sub = $('<span></span>')
+            .addClass('timeMsg')
+            .append(time)
+            .append(status)
+
+        return main.append(sub)
+    }
+
     plotUserMsg(msg) {
-        let objMessage = $('<p></p>')
-            .addClass("messageA")
-            .html(msg);
+        let objMessage = this.structureMsg(msg, Date.parse(new Date()), 'A')
         this.chat.append(objMessage)
         this.typeChat.html('').blur().focus();
     }
 
-    plotReceivedMsg(msg, type) {
-        let objMessage = $('<p></p>')
-            .addClass("message" + type)
-            .html(msg);
+    plotReceivedMsg(msg, timestamp, type) {
+        let objMessage = this.structureMsg(msg, timestamp, type)
         this.chat.html() ? this.chat.children().eq(0).before(objMessage) : this.chat.append(objMessage);
     }
 
@@ -275,10 +290,17 @@ class Pluh {
         let scrollNow = this.chat.scrollTop()
         let scrollMax = this.chat[0].scrollHeight - this.chat[0].offsetHeight
         let ratio = scrollNow / scrollMax
-        if (ratio > .85) {
+        if (ratio > .65) {
             this.chat.scrollTop(scrollMax)
         }
     }
+
+    downScroll() {
+        let scrollMax = this.chat[0].scrollHeight - this.chat[0].offsetHeight
+        this.chat.scrollTop(scrollMax)
+    }
+
+
 
     initApi() {
         return axios.create({
@@ -339,7 +361,7 @@ class Pluh {
                     }
                     this.setRequisiting(false)
                     return msgs.data[0];
-                } else if (msgs.code == 13) {
+                } else if (msgs.data.code == 13) {
                     await this.delay(2);
                     return await this.getMessage(nMsgs);
                 } else {
