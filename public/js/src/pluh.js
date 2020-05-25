@@ -222,11 +222,11 @@ class Pluh {
     }
 
     delete() {
-        this.chat.html('');
-        this.page.html('');
-        localStorage.clear();
         this.deleteMessage().then(() => {
-            this.window.location = 'www.google.com';
+            this.chat.html('');
+            this.page.html('');
+            localStorage.clear();
+            window.location.replace("http://www.google.com")
         })
     }
 
@@ -320,7 +320,9 @@ class Pluh {
 
     async deleteMessage() {
         return await this.api.delete('/pluh', {
-            "chatId": this.chatId,
+            params: {
+                'chatId': this.chatId,
+            }
         });
     }
 

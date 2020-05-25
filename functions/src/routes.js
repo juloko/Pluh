@@ -15,7 +15,7 @@ routes.post("/pluh", celebrate({
 }), PluhController.create)
 
 routes.get("/pluh", celebrate({
-    [Segments.BODY]:
+    [Segments.QUERY]:
         Joi.object().keys({
             pageCursor: Joi.string(),
             chatId: Joi.string().required(),
@@ -24,7 +24,7 @@ routes.get("/pluh", celebrate({
 }), PluhController.index)
 
 routes.delete("/pluh", celebrate({
-    [Segments.BODY]:
+    [Segments.QUERY]:
         Joi.object().keys({
             chatId: Joi.string().required(),
         })

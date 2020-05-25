@@ -62,7 +62,8 @@ module.exports = {
     },
 
     async delete(req, res, next) {
-        const { chatId } = req.body
+        const { chatId } = req.query
+        console.log(chatId)
         try {
             const response = await datastore.save({
                 key: datastore.key(['Delete', chatId]),
