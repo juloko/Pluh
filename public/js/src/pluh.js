@@ -30,6 +30,7 @@ class Pluh {
         this.btnSendMsg = $("#sendMsg");
         this.sideA = $('.side-a')
         this.footer = $('footer')
+        this.retry = $('.retry')
 
         //Objects
         this.api;
@@ -60,7 +61,6 @@ class Pluh {
         this.btnDelete.click(() => this.delete());
         this.btnSendMsg.click(e => this.aMsg(e));
         this.chat.bind('DOMSubtreeModified', () => this.updateScroll());
-        // this.window.resize(() => this.resize());
 
     }
 
@@ -232,23 +232,55 @@ class Pluh {
             })
     }
 
+    updateRetryListener() {
+        this.retry = $('.retry')
+        this.retry.click((e) => this.reSendMsg(e));
+    }
+
+    tryMsg(textMsg) {
+        let msgId = this.plotUserMsg(textMsg, 'A')
+        this.downScroll();
+        this.postMessage(textMsg).then((data) => {
+            if (!data.data[0].mutationResults[0].conflictDetected) {
+                $("#" + msgId).find('i').removeClass("fas fa-hourglass-start").addClass("fas fa-hourglass-end");
+            }
+            else {
+                throw Error(data)
+            }
+        }).catch(() => {
+            let retry = $('<i></i>')
+                .addClass('retry')
+                .addClass('fas fa-undo-alt');
+
+            let btn = $('<button></button>')
+                .append(retry);
+
+            $("#" + msgId)
+                .css('box-shadow', '-4px 4px 4px #ff4aa68c, -4px -4px 4px #ffffff')
+                .append(btn);
+
+            this.updateRetryListener()
+        })
+    }
+
     async aMsg(e) {
         if ((e.type === "click") || (e.type === "keypress" && e.which === 13 && !e.shiftKey)) {
             e.preventDefault()
             let textMsg = this.typeChat.html()
             if (textMsg.replace(/ /g, '').length) {
-                let msgId = this.plotUserMsg(textMsg, 'A')
-                this.downScroll();
-                this.postMessage(textMsg).then(() => {
-                    $("#" + msgId).find('i').removeClass("fas fa-hourglass-start").addClass("fas fa-hourglass-end");
-                }).catch(() => {
-
-                })
+                this.tryMsg(textMsg)
             }
         }
     }
 
-    // box-shadow: 4px 4px 14px #ff4aa68c, -4px -4px 4px #ffffff;
+    reSendMsg(e) {
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        let id = e.originalEvent.path[2].getAttribute('id');
+        let textMsg = $('#'+id).contents().first().text();
+        $('#'+id).remove();
+        this.tryMsg(textMsg)
+    }
 
     structureMsg(msg, timestamp, type, icon) {
         let main = $('<p></p>')
@@ -274,7 +306,6 @@ class Pluh {
         let objMessage = this.structureMsg(msg, new Date().toISOString(), 'A', 'fas fa-hourglass-start')
         this.chat.append(objMessage)
         this.typeChat.html('').blur().focus();
-        console.log(objMessage.attr('id'))
         return objMessage.attr('id')
     }
 
