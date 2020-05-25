@@ -4,6 +4,7 @@ class Pluh {
     constructor() {
         //Contants
         this.animationLogin = `2s cubic-bezier(0.4, 0, 1, 1) 0.3s 1 normal backwards running goesChat`
+        this.animationShake = `2s   1 normal backwards running shake`
 
         //Variables
         this.backendUrl;
@@ -18,7 +19,6 @@ class Pluh {
         this.window = $(window);
         this.page = $('html');
         this.chat = $("#chat");
-        this.wrapperChat = $("#wrapperChat");
         this.loader = $("#loader");
         this.preLoader = $("#preloader");
         this.findChat = $("#findChat");
@@ -32,26 +32,25 @@ class Pluh {
         this.sideA = $('.side-a')
         this.footer = $('footer')
 
-        //Functions
+        //Objects
+        this.api;
+
+        //InitFunctions
         this.init();
         this.registerHandlers();
-
-        //Objects
-        this.api = this.initApi()
     }
 
     async init() {
         await this.loading();
         await this.verifyMode()
-        this.typed('#inputChat',
-            [
-                '',
-                'The public is private.',
-                'Your key is your brain.',
-                'Mutual excludable.',
-                '/your_secret_Chat!'
-            ]
-        )
+        this.api = this.initApi()
+        this.typed(this.inputChat.selector, [
+            '',
+            'The public is private.',
+            'Your key is your brain.',
+            'Mutual excludable.',
+            '/your_secret_Chat!'
+        ]);
     }
 
     registerHandlers() {
@@ -61,7 +60,9 @@ class Pluh {
         this.btnBack.click(() => this.back());
         this.btnDelete.click(() => this.delete());
         this.btnSendMsg.click(e => this.aMsg(e));
-        this.wrapperChat.bind('DOMSubtreeModified', () => this.updateScroll())
+        this.chat.bind('DOMSubtreeModified', () => this.updateScroll());
+        // this.window.resize(() => this.resize());
+
     }
 
     loading() {
@@ -75,7 +76,7 @@ class Pluh {
     }
 
     typed(place, strings) {
-        new Typed(place, {
+        return new Typed(place, {
             strings,
             typeSpeed: 30,
             backSpeed: 0,
@@ -90,7 +91,6 @@ class Pluh {
             const response = await axios({
                 method: 'PUT',
                 url: `http://localhost:5001/pluhmessage/us-central1/app/pluh`,
-
             });
         } catch (err) {
             if (err.message == "Request failed with status code 404") {
@@ -114,39 +114,50 @@ class Pluh {
 
     hideNameChatShowChat() {
         this.findChat.hide()
-        this.inputChat.val('').blur().focus();
-        this.setAnimation(this.btnOpenChat, '')
+        this.inputChat.val('').blur()
         this.windowChat.css('display', 'flex')
-
-        if (this.mobilecheck) {
+        if (this.mobilecheck || this.window.width() < 768) {
             this.sideA.hide()
             this.footer.hide()
         }
     }
 
-    async initOldMessages() {
-        const { data } = await this.getMessage(5);
+    async initOldMessages(chatId) {
+        this.chatId = chatId;
+        const msgs = await this.getMessage(10);
+        this.hideNameChatShowChat();
+        if (msgs) {
+            msgs.forEach((ele, ) => {
+                this.plotReceivedMsg(ele.msg, 'A')
+            })
+            this.updateScroll();
+        }
+    }
 
-        const arr = data[0];
-        // arr.forEach((ele, ) => {
-        //     console.log(ele);
-        //     // this.plotMsg(i.msg, 'A')
-        // }.bind(this))
-
+    verifyColision(obj, wall, callback) {
+        let timedAnimation = setInterval(() => {
+            if (obj.offset().left >= wall.width()) {
+                clearInterval(timedAnimation);
+                callback()
+            }
+        }, 50);
     }
 
     openChat(e) {
         if ((e.type == "click") || (e.type == "keypress" && e.which == 13)) {
-            this.initChat();
-            let timedAnimation = setInterval(() => {
-                if (this.btnOpenChat.offset().left >= this.window.width()) {
-                    clearInterval(timedAnimation);
-                    this.hideNameChatShowChat();
-                    this.initOldMessages();
-                }
-            }, 50);
+            this.setAnimation(this.btnOpenChat, this.animationLogin);
+            let chatId = this.inputChat.val();
+            if (chatId.replace(/ /g, '').length) {
+                this.initOldMessages(chatId);
+            } else {
+                this.setAnimation(this.btnOpenChat, '');
+                this.setAnimation(this.inputChat, this.animationShake);
+                this.inputChat.val('').blur();
+            }
         }
     }
+
+    showAt() { console.log('essa mrd', this.inputType); }
 
     userData() {
         return {
@@ -203,15 +214,15 @@ class Pluh {
     }
 
     back() {
-        this.windowChat.css('display', 'none')
-        this.wrapperChat.html('');
-        this.findChat.show()
-        this.sideA.show()
-        this.footer.show()
+        this.windowChat.css('display', 'none');
+        this.chat.html('');
+        this.findChat.show();
+        this.sideA.show();
+        this.footer.show();
     }
 
     delete() {
-        this.wrapperChat.html('');
+        this.chat.html('');
         this.page.html('');
         localStorage.clear();
         this.deleteMessage().then(() => {
@@ -220,30 +231,41 @@ class Pluh {
     }
 
     async aMsg(e) {
-        if ((e.type === "click") || (e.type === "keypress" && e.which === 13)) {
+        if ((e.type === "click") || (e.type === "keypress" && e.which === 13 && !e.shiftKey)) {
             e.preventDefault()
-            let textMsg = this.typeChat.val()
+            let textMsg = this.typeChat.html()
             if (textMsg.replace(/ /g, '').length) {
-                this.plotMsg(textMsg, 'A')
+                this.plotUserMsg(textMsg, 'A')
                 this.postMessage(textMsg).then(
 
                 )
-                    .catch(
-
-                    )
             }
         }
     }
 
-    plotMsg(msg, type) {
+    plotUserMsg(msg) {
+        let objMessage = $('<p></p>')
+            .addClass("messageA")
+            .html(msg);
+        this.chat.append(objMessage)
+        this.typeChat.html('').blur().focus();
+    }
+
+    plotReceivedMsg(msg, type) {
         let objMessage = $('<p></p>')
             .addClass("message" + type)
             .html(msg);
-        this.wrapperChat.append(objMessage);
-        this.typeChat.val('').blur().focus();
+        this.chat.html() ? this.chat.children().eq(0).before(objMessage) : this.chat.append(objMessage);
     }
 
     setAnimation(self, animation) {
+        let time = animation.split('s')[0]
+        if (time) {
+            setTimeout(() => {
+                this.setAnimation(self, '')
+            }, time * 1000);
+        }
+
         self.css('-moz-animation', animation)
             .css('animation', animation)
             .css('-webkit-animation', animation);
@@ -272,16 +294,6 @@ class Pluh {
         });
     }
 
-    async getMessage(nMsgs) {
-        return await this.api.get('/pluh', {
-            params: {
-                "pageCursor": this.pageCursor,
-                "chatId": this.chatId,
-                nMsgs
-            }
-        });
-    }
-
     async deleteMessage() {
         return await this.api.delete('/pluh', {
             "chatId": this.chatId,
@@ -302,24 +314,42 @@ class Pluh {
         return check;
     };
 
-    async  getMessages() {
+    async delay(seconds) {
+        return await new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve();
+            }, seconds * 1000)
+        })
+    }
+
+    async  getMessage(nMsgs) {
         try {
-            if (!this.requisiting && !this.endNews) {
-                setRequisiting(true)
-                let msgs = await this.api.post('/robotNews', {
-                    someURl,
-                    'lang': 'pt'
-                });
-                if (msgs[1].moreResults == "NO_MORE_RESULTS") {
-                    setEndMsg(true)
+            if (!this.requisiting && !this.endMsg) {
+                this.setRequisiting(true)
+                let msgs = await this.api.get('/pluh', {
+                    params: {
+                        "pageCursor": this.pageCursor,
+                        "chatId": this.chatId,
+                        nMsgs
+                    }
+                })
+                if (msgs.data[1]) {
+                    if (msgs.data[1].moreResults == "NO_MORE_RESULTS") {
+                        this.setEndMsg(true)
+                    }
+                    this.setRequisiting(false)
+                    return msgs.data[0];
+                } else if (msgs.code == 13) {
+                    await this.delay(2);
+                    return await this.getMessage(nMsgs);
+                } else {
+                    alert("Unknown error");
                 }
-                putMsg(msgs)
-                setRequisiting(false)
             }
         } catch (error) {
-            setRequisiting(false)
+            this.setRequisiting(false)
         }
     }
 }
 
-new Pluh
+pl = new Pluh
