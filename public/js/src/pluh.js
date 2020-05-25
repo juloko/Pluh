@@ -241,12 +241,14 @@ class Pluh {
                 this.downScroll();
                 this.postMessage(textMsg).then(() => {
                     $("#" + msgId).find('i').removeClass("fas fa-hourglass-start").addClass("fas fa-hourglass-end");
-                }
+                }).catch(() => {
 
-                )
+                })
             }
         }
     }
+
+    // box-shadow: 4px 4px 14px #ff4aa68c, -4px -4px 4px #ffffff;
 
     structureMsg(msg, timestamp, type, icon) {
         let main = $('<p></p>')

@@ -386,8 +386,7 @@ p.messageA{
   float: left;
   border-radius: 0rem 1rem 1rem 1rem;
   background-color: var(--terciary-color);
-  box-shadow:  4px 4px 4px #e4e2e2, 
-  -4px -4px 4px #ffffff;
+  box-shadow:  -4px 4px 4px #e4e2e2, -4px -4px 4px #ffffff;
   
 }
 
