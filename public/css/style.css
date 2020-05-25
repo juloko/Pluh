@@ -84,7 +84,7 @@ button:hover{
 
 footer{
   font-size: 1rem;
-  color: rgba(0, 0, 0, 0.699);
+  color: rgba(255, 255, 255, 0.836);
   font-family: "Aeonik Light Italic", italic !important;
   position: absolute;
   bottom: 0;
@@ -160,7 +160,6 @@ i{
 }
 
 .secondPage{
-  overflow: hidden;
 }
 
 #openChat{
@@ -175,7 +174,7 @@ i{
   #windowChat{
   flex-direction: column;
   height: 100%;
-  margin-top: 1rem !important;
+  margin-top: 1rem;
   display: none;
   vertical-align: top;
   width: 30rem;
@@ -203,9 +202,6 @@ box-shadow:  -17px -17px 33px #c10054, 17px 17px 33px #ff0072;
 }
 
 
-
-
-
 .navIcons #settings{
   padding: 0 10rem;
   height: 3rem;
@@ -215,7 +211,8 @@ box-shadow:  -17px -17px 33px #c10054, 17px 17px 33px #ff0072;
   box-shadow:  -17px -17px 33px #c10054, 
     17px 17px 33px #ff0072;
     background-color: var(--terciary-color);
-    font-family: "Aeonik Light", sans-serif !important;
+    font-family: "Aeonik Light Italic", sans-serif !important;
+    font-size: 1.5rem !important;
     width: 30rem;
 }
 
@@ -231,10 +228,8 @@ box-shadow:  -17px -17px 33px #c10054, 17px 17px 33px #ff0072;
   border:none;
   padding:  .5rem;
   border-radius: var(--border-radius-one);
-  font-size: 1.4rem;
   background-color:  transparent;
   caret-color: var(--main-color);
-  font-size: 15px;
   font-weight: 400;
   max-height: 100px;
   min-height: 20px;
@@ -253,10 +248,9 @@ box-shadow:  -17px -17px 33px #c10054, 17px 17px 33px #ff0072;
 
 #chat{
   flex: 1 2 0;
-  order: 1;
+  order: 2;
   position: relative;
-  z-index: 1;
-  top: .5rem ;
+  z-index: 99;
   padding:  .5rem .5rem .5rem .5rem;
   border-radius: var(--border-radius-one);
   font-size: 1.4rem;
@@ -284,9 +278,10 @@ box-shadow:  -17px -17px 33px #c10054, 17px 17px 33px #ff0072;
 }
 
 p.messageA{
+  color: black !important;
   float: left;
   border-radius: 0rem 1rem 1rem 1rem;
-  background-color: var(--sextenary-color);
+  background-color: var(--terciary-color);
   box-shadow:  4px 4px 2px #f5f5f5, 
   -4px -4px 2px #ffffff;
 }
@@ -294,7 +289,7 @@ p.messageA{
 p.messageB{
   float: right;
   border-radius: 1rem 1rem 0rem 1rem;
-  background-color: var(--quintanary-color);
+  background-color: #fa4090;
   box-shadow:  -3px 3px 2px #f5f5f5, 
   3px -3px 2px #ffffff;
   
@@ -325,11 +320,9 @@ p.messageB{
 @media screen and (max-width: 768px) {
 
    #logo{
-    /* margin-top: 5rem !important;
-    width: 20rem; */
+    margin-top: 5rem !important;
+    width: 20rem;
 
-    margin-top: 0rem;
-    width: 0rem;
   }
 
   #inputChat{
@@ -343,15 +336,10 @@ p.messageB{
 
   footer{
     position: fixed;
-    height: 6.5vh;  
   }
 
   footer li{
     margin: 0 1rem 0 1rem;
-  }
-
-  footer small{
-    display: none;
   }
 
   footer ul{
@@ -360,8 +348,22 @@ p.messageB{
 
 
   .navIcons{
-    order: 1
-    height:5.5vh
+    background-color: var(--terciary-color);
+    order: 1;
+    height: 6.5vh;
+    }
+
+  
+  .navIcons i{
+  color: var(--main-color);
+  font-size: 1.5rem;  
+  box-shadow:  -17px -17px 33px transparent;
+  }
+  
+  .navIcons i:hover{
+    box-shadow:  17px 17px px transparent ;
+  
+    color:var(--terciary-color)
   }
 
   .navIcons #settings{
@@ -373,14 +375,14 @@ p.messageB{
     top: 0;
     display: none;
     flex-direction: column;
-    margin-top: 3vh !important;
+    margin: 0;
     width: 100% ;
     /* height: 65vh; */
   }
   
 
   #textChat{
-    margin: auto;
+    margin: 0 2vw 2vw 2vw;
     width: 97vw;;
     border-radius: 2rem ;
     order: 3;
@@ -388,7 +390,7 @@ p.messageB{
     flex: none;
     box-sizing: border-box;
     z-index: 1;
-    
+    display: inline-flex;
   }
 
   .fieldType{
@@ -397,10 +399,6 @@ p.messageB{
 
 
   #chat{
-    flex: 1 2 0;
-    order: 1;
-    position: relative;
-    z-index: 1;
     padding: 0;
     background-color:transparent;
   }
