@@ -21,6 +21,7 @@
 -  Catch from DB the last 10 messages;
 -  If delete button was pressed, delete all in frontend and backend;
 -  Add icon to monitor sended messages;
+-  <del>Add favicon .ico;<del>
 -  <del>Add pooling of messages;<del>
 -  <del>Catch from DB the last messages by scroll using page cursor;<del>
 -  <del>Add retry to send message;<del>
