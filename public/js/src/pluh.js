@@ -236,14 +236,16 @@ class Pluh {
             let textMsg = this.typeChat.html()
             if (textMsg.replace(/ /g, '').length) {
                 this.plotUserMsg(textMsg, 'A')
-                this.postMessage(textMsg).then(
+                this.postMessage(textMsg).then(() => {
+                    $("#chat").find('p').last().find('i').removeClass("fas fa-hourglass-start").addClass("fas fa-hourglass-end");
+                }
 
                 )
             }
         }
     }
 
-    structureMsg(msg, timestamp, type) {
+    structureMsg(msg, timestamp, type, icon) {
         let main = $('<p></p>')
             .addClass("message" + type)
             .html(msg)
@@ -252,7 +254,7 @@ class Pluh {
             .html(new Date(timestamp).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }).replace(' ', ''))
 
         let status = $('<i></i>')
-            .addClass('fas fa-hourglass-start')
+            .addClass(icon)
 
         let sub = $('<span></span>')
             .addClass('timeMsg')
@@ -263,13 +265,13 @@ class Pluh {
     }
 
     plotUserMsg(msg) {
-        let objMessage = this.structureMsg(msg, Date.parse(new Date()), 'A')
+        let objMessage = this.structureMsg(msg, Date.parse(new Date()), 'A', 'fas fa-hourglass-start')
         this.chat.append(objMessage)
         this.typeChat.html('').blur().focus();
     }
 
     plotReceivedMsg(msg, timestamp, type) {
-        let objMessage = this.structureMsg(msg, timestamp, type)
+        let objMessage = this.structureMsg(msg, timestamp, type, '')
         this.chat.html() ? this.chat.children().eq(0).before(objMessage) : this.chat.append(objMessage);
     }
 
