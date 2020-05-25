@@ -29,7 +29,8 @@ class Pluh {
         this.btnBack = $("#back");
         this.btnDelete = $("#delete");
         this.btnSendMsg = $("#sendMsg");
-        this.logo = $('#logo')
+        this.sideA = $('.side-a')
+        this.footer = $('footer')
 
         //Functions
         this.init();
@@ -118,7 +119,8 @@ class Pluh {
         this.windowChat.css('display', 'flex')
 
         if (this.mobilecheck) {
-            this.logo.hide()
+            this.sideA.hide()
+            this.footer.hide()
         }
     }
 
@@ -204,7 +206,8 @@ class Pluh {
         this.windowChat.css('display', 'none')
         this.wrapperChat.html('');
         this.findChat.show()
-        this.logo.show()
+        this.sideA.show()
+        this.footer.show()
     }
 
     delete() {

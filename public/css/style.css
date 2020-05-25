@@ -124,24 +124,51 @@ a{
 }
 
 .item{
-  display: inline-block;
-  vertical-align: middle
+  /* display: inline-block;
+  vertical-align: middle */
 }
 
 #logo{
-  margin-top: 10rem;
   width: 25rem;
-  margin-right: 8rem;
-  margin-left: 8rem;
 }
+
+
 
 #app{
   position: absolute;
   top: 0;
   left: 0;}
 
+.flex-container{
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  align-content: center;
+}
+
+
+img{
+  margin-left: 15vw;
+}
+
+
+.side-a{
+  width: 50vw;
+  align-self:center;
+  flex-shrink: 0;
+  flex-grow: 1;
+  flex-basis: 0;
+}
+
+.side-b{
+  align-self:center;
+  flex-grow: 1;
+  flex-basis: 0;
+  /* width: 50vw; */
+}
+
 #inputChat{
-  margin-top: 10rem;
   border:none;
   padding:  .5rem .5rem .5rem 1.5rem;
   border-radius: 50px;
@@ -172,15 +199,19 @@ i{
 }
 
   #windowChat{
+  position: absolute;
+  top: 0;
   flex-direction: column;
-  height: 100%;
-  margin-top: 1rem;
+  height: 85%;
   display: none;
   vertical-align: top;
   width: 30rem;
 }
 
 .navIcons{
+  margin-top: 1rem;
+  border-radius: 2rem 2rem  0 0 ;
+  background-color: var(--terciary-color);
   text-align: center;
   font-size: 1rem !important;
 
@@ -191,14 +222,12 @@ i{
 }
 
 .navIcons i{
-font-size: 1.5rem;  
-box-shadow:  -17px -17px 33px #c10054, 17px 17px 33px #ff0072;
+  color: var(--main-color);
+  font-size: 1.5rem;  
 }
 
 .navIcons i:hover{
-  box-shadow:  17px 17px px #ff0072, -17px -17px 33px #c10054 ;
-
-  color:var(--terciary-color)
+  color:var(--quintanary-color)
 }
 
 
@@ -208,12 +237,18 @@ box-shadow:  -17px -17px 33px #c10054, 17px 17px 33px #ff0072;
 }
 
 #textChat{
-  box-shadow:  -17px -17px 33px #c10054, 
-    17px 17px 33px #ff0072;
-    background-color: var(--terciary-color);
-    font-family: "Aeonik Light Italic", sans-serif !important;
-    font-size: 1.5rem !important;
-    width: 30rem;
+  margin-top: .3rem;;
+  background-color: var(--terciary-color);
+  font-family: "Aeonik Light Italic", sans-serif !important;
+  font-size: 1.2rem !important;
+  width: 30rem;
+  border-radius: 2rem ;
+  order: 3;
+  position: relative;
+  flex: none;
+  box-sizing: border-box;
+  z-index: 1;
+  display: inline-flex;
 }
 
 #textChat i{
@@ -226,6 +261,7 @@ box-shadow:  -17px -17px 33px #c10054, 17px 17px 33px #ff0072;
   color: #444444;
   margin: .5rem 0 0 1rem ;
   border:none;
+  width: 80%;
   padding:  .5rem;
   border-radius: var(--border-radius-one);
   background-color:  transparent;
@@ -252,14 +288,14 @@ box-shadow:  -17px -17px 33px #c10054, 17px 17px 33px #ff0072;
   position: relative;
   z-index: 99;
   padding:  .5rem .5rem .5rem .5rem;
-  border-radius: var(--border-radius-one);
+  /* border-radius: var(--border-radius-one); */
+  border-radius:  0 0 2rem 2rem;
   font-size: 1.4rem;
   font-family: "Aeonik Light", sans-serif !important;
   background-color: var(--terciary-color);
   caret-color: var(--main-color);
   overflow-x:hidden;
   overflow-y:visible;
-  width: 100%;
 }
 
 #wrapperChat{
@@ -267,7 +303,7 @@ box-shadow:  -17px -17px 33px #c10054, 17px 17px 33px #ff0072;
 }
 
 #chat p{
-  margin: .1rem;
+  margin: .25rem;
   padding: .8rem;
   font-family: "Aeonik Light", sans-serif !important;
   font-size: 1rem;
@@ -282,16 +318,17 @@ p.messageA{
   float: left;
   border-radius: 0rem 1rem 1rem 1rem;
   background-color: var(--terciary-color);
-  box-shadow:  4px 4px 2px #f5f5f5, 
-  -4px -4px 2px #ffffff;
+  box-shadow:  4px 4px 4px #e4e2e2, 
+  -4px -4px 4px #ffffff;
+  
 }
 
 p.messageB{
   float: right;
   border-radius: 1rem 1rem 0rem 1rem;
   background-color: #fa4090;
-  box-shadow:  -3px 3px 2px #f5f5f5, 
-  3px -3px 2px #ffffff;
+  box-shadow:  4px 4px 4px #eebed4, 
+  -0px -0px 0px #ff4aa6;
   
 }
 
@@ -307,10 +344,11 @@ p.messageB{
 ::-webkit-scrollbar-thumb
 {
 	border-radius: 10px;
-	background-color: var(--main-color);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%,
-	                   color-stop(.5, rgba(255, 255, 255, .2)),
-					   color-stop(.5, transparent), to(transparent));
+  background-color: #00aaee;
+  background-image: -webkit-gradient(linear, 0 0, 0 100%,
+                    color-stop(.5, rgba(255, 255, 255, .2)),
+            color-stop(.5, transparent), to(transparent));
+
 }
 /* ::-webkit-scrollbar-track, ::-webkit-scrollbar-thumb {
   border: 16px solid rgba(255, 255, 255, 0);
@@ -319,6 +357,21 @@ p.messageB{
 
 @media screen and (max-width: 768px) {
 
+  .flex-container{
+    display: block;
+    display: inline-block;
+    vertical-align: middle
+  }
+
+  .side-a {
+    width: 100vw;
+    margin-left: 0;
+  }
+
+  .side-b{
+    width: 100vw;
+  }
+
    #logo{
     margin-top: 5rem !important;
     width: 20rem;
@@ -326,7 +379,7 @@ p.messageB{
   }
 
   #inputChat{
-    margin-top: 5rem !important;
+    margin-top: 10rem !important;
   }
 
   .item{
@@ -339,7 +392,7 @@ p.messageB{
   }
 
   footer li{
-    margin: 0 1rem 0 1rem;
+    margin: 0 .7rem 0 .7rem;
   }
 
   footer ul{
@@ -348,21 +401,23 @@ p.messageB{
 
 
   .navIcons{
+    margin: 2vw 2vw 0 2vw;
     background-color: var(--terciary-color);
     order: 1;
     height: 6.5vh;
+    border-radius: 2rem 2rem 0 0;
+    width: 97vw;
     }
 
   
   .navIcons i{
-  color: var(--main-color);
-  font-size: 1.5rem;  
-  box-shadow:  -17px -17px 33px transparent;
+    color: var(--main-color);
+    font-size: 1.5rem;  
+    box-shadow:  -17px -17px 33px transparent;
   }
   
   .navIcons i:hover{
-    box-shadow:  17px 17px px transparent ;
-  
+    box-shadow:  17px 17px 33px transparent ;
     color:var(--terciary-color)
   }
 
@@ -373,6 +428,7 @@ p.messageB{
   #windowChat{
     position: absolute;
     top: 0;
+    height: 100%;
     display: none;
     flex-direction: column;
     margin: 0;
@@ -382,25 +438,22 @@ p.messageB{
   
 
   #textChat{
-    margin: 0 2vw 2vw 2vw;
-    width: 97vw;;
-    border-radius: 2rem ;
-    order: 3;
-    position: relative;
-    flex: none;
-    box-sizing: border-box;
-    z-index: 1;
-    display: inline-flex;
+
+    margin: 2vw 2vw 2vw 2vw;
+    width: 97vw;
   }
 
   .fieldType{
-    width: 80%;
   }
 
 
   #chat{
+    border-radius:  0 0 2rem 2rem;
     padding: 0;
-    background-color:transparent;
+    margin: 0 0 2vw 0;
+    width: 97vw;
+    margin: 0 2vw 0 2vw;
+    /* background-color:transparent; */
   }
 
   #chat p {
