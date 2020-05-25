@@ -227,9 +227,9 @@ class Pluh {
             this.page.html('');
             window.location.replace("http://www.google.com")
         })
-        .catch(()=>{
-            this.delete()
-        })
+            .catch(() => {
+                this.delete()
+            })
     }
 
     async aMsg(e) {
@@ -237,9 +237,10 @@ class Pluh {
             e.preventDefault()
             let textMsg = this.typeChat.html()
             if (textMsg.replace(/ /g, '').length) {
-                this.plotUserMsg(textMsg, 'A')
+                let msgId = this.plotUserMsg(textMsg, 'A')
+                this.downScroll();
                 this.postMessage(textMsg).then(() => {
-                    $("#chat").find('p').last().find('i').removeClass("fas fa-hourglass-start").addClass("fas fa-hourglass-end");
+                    $("#" + msgId).find('i').removeClass("fas fa-hourglass-start").addClass("fas fa-hourglass-end");
                 }
 
                 )
@@ -251,6 +252,7 @@ class Pluh {
         let main = $('<p></p>')
             .addClass("message" + type)
             .html(msg)
+            .attr('id', '_' + this.hash(timestamp))
 
         let time = $('<span></span>')
             .html(new Date(timestamp).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }).replace(' ', ''))
@@ -267,9 +269,11 @@ class Pluh {
     }
 
     plotUserMsg(msg) {
-        let objMessage = this.structureMsg(msg, Date.parse(new Date()), 'A', 'fas fa-hourglass-start')
+        let objMessage = this.structureMsg(msg, new Date().toISOString(), 'A', 'fas fa-hourglass-start')
         this.chat.append(objMessage)
         this.typeChat.html('').blur().focus();
+        console.log(objMessage.attr('id'))
+        return objMessage.attr('id')
     }
 
     plotReceivedMsg(msg, timestamp, type) {
