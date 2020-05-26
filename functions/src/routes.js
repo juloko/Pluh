@@ -17,7 +17,7 @@ routes.post("/pluh", celebrate({
 routes.get("/pluh", celebrate({
     [Segments.QUERY]:
         Joi.object().keys({
-            pageCursor: Joi.string(),
+            pageCursor: Joi.string().allow(''),
             chatId: Joi.string().required(),
             nMsgs: Joi.string().required(),
         })

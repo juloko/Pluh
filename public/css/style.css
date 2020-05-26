@@ -518,7 +518,7 @@ p.messageB{
     order: 1;
     height: 6.5vh;
     border-radius: 2rem 2rem 0 0;
-    width: 97vw;
+    width: 96vw;
     }
 
   
@@ -552,7 +552,7 @@ p.messageB{
   #textChat{
 
     margin: 2vw 2vw 2vw 2vw;
-    width: 97vw;
+    width: 96vw;
   }
 
   .fieldType{
@@ -563,7 +563,7 @@ p.messageB{
     border-radius:  0 0 2rem 2rem;
     padding: 0;
     margin: 0 0 2vw 0;
-    width: 97vw;
+    width: 96vw;
     margin: 0 2vw 0 2vw;
     /* background-color:transparent; */
   }

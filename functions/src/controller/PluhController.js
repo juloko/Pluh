@@ -45,7 +45,7 @@ module.exports = {
             resp ? timestamp = resp.timestamp : timestamp = new Date('1990-01-01T00:00:00z')
 
             const query = datastore.createQuery(chatId)
-                // .start(pageCursor)
+                .start(pageCursor)
                 .order('timestamp', {
                     descending: true,
                 })

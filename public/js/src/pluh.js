@@ -1,5 +1,3 @@
-
-
 class Pluh {
     constructor() {
         //Contants
@@ -114,7 +112,7 @@ class Pluh {
         this.chatId = chatId;
         await this.getPlotMessages(10);
         this.hideNameChatShowChat();
-
+        this.downScroll();
     }
 
     async getPlotMessages(nMsgs) {
@@ -207,11 +205,11 @@ class Pluh {
 
     back() {
         this.windowChat.css('display', 'none');
-        this.windowChat.css('display', 'none');
         this.chat.html('');
         this.findChat.show();
         this.sideA.show();
         this.footer.show();
+        this.setAnimation(this.btnOpenChat, '');
     }
 
     delete() {
