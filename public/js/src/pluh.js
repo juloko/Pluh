@@ -8,7 +8,7 @@ class Pluh {
         this.backendUrl;
         this.userId = this.setUser();
         this.chatId;
-        this.pageCursos = ""
+        this.pageCursor = ""
         this.requisiting = false;
         this.mobilecheck = this.mobileCheck()
 
@@ -58,8 +58,8 @@ class Pluh {
         this.btnBack.click(() => this.back());
         this.btnDelete.click(() => this.delete());
         this.btnSendMsg.click(e => this.aMsg(e));
-        this.chat.bind('DOMSubtreeModified', () => this.updateScroll());
-        this.chat.scroll(() => this.scrollUp());
+        // this.chat.bind('DOMSubtreeModified', () => this.updateScroll());
+        this.chat.scroll((e) => this.scrollUp(e));
     }
 
     loading() {
@@ -328,8 +328,14 @@ class Pluh {
         return { scrollNow, scrollMax, ratio }
     }
 
-    scrollUp() {
-        console.log(this.scroll().ratio)
+    async scrollUp(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        if(this.scroll().ratio < .2 && !this.requisiting){
+            console.log(this.scroll().ratio);
+            await this.getPlotMessages(10);
+        }
     }
 
 
@@ -395,16 +401,21 @@ class Pluh {
                 })
                 if (msgs.data[1]) {
                     if (msgs.data[1].moreResults == "NO_MORE_RESULTS") {
+                        this.setRequisiting(false);
+                        return;
+                    } else {
+                        this.setRequisiting(false);
+                        this.pageCursor = msgs.data[1].endCursor;
+                        return msgs.data[0];
                     }
-                    this.setRequisiting(false)
-                    return msgs.data[0];
                 } else if (msgs.data.code == 13) {
                     await this.delay(2);
-                    this.setRequisiting(false)
+                    this.setRequisiting(false);
                     return await this.getMessages(nMsgs);
                 } else {
                     this.setRequisiting(false)
                     alert("Unexpected error");
+                    return;
                 }
             }
         } catch (error) {

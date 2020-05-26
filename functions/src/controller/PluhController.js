@@ -36,9 +36,6 @@ module.exports = {
 
     async index(req, res, next) {
         const { pageCursor, chatId, nMsgs } = req.query;
-        console.log(pageCursor)
-        console.log(chatId)
-        console.log(nMsgs)
         try {
             const [resp] = await datastore.get(datastore.key(['Delete', chatId]));
             let timestamp
@@ -56,14 +53,13 @@ module.exports = {
             res.header('Accept-Datetime', timestamp);
             res.send(response)
         } catch (err) {
-            console.log('error')
+            console.error('ERROR:', err);
             res.send(err)
         }
     },
 
     async delete(req, res, next) {
         const { chatId } = req.query
-        console.log(chatId)
         try {
             const response = await datastore.save({
                 key: datastore.key(['Delete', chatId]),
