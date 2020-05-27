@@ -392,7 +392,6 @@ class Pluh {
         }
     }
 
-
     updateScroll() {
         if (this.scroll().ratio > .65)
             this.chat.scrollTop(scrollMax)

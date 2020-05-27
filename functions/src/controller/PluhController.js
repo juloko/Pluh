@@ -126,5 +126,26 @@ module.exports = {
             res.send(err)
         }
     },
+
+    async patch(req, res, next) {
+        const {chatId, nUsers, secret } = req.query
+        try {
+            const response = await datastore.save([
+                {
+                    key: datastore.key(['Data', chatId]),
+                    data: {
+                        nUsers,
+                        secret,
+                    },
+                }
+            ]);
+
+            res.send(response)
+        } catch (err) {
+            console.error('ERROR:', err);
+            res.send(err)
+        }
+    },
+
 }
 

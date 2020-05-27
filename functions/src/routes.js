@@ -39,4 +39,14 @@ routes.delete("/pluh", celebrate({
 }), PluhController.delete)
 
 
+routes.patch("/pluh", celebrate({
+    [Segments.QUERY]:
+        Joi.object().keys({
+            chatId: Joi.string().required(),
+            nUsers: Joi.number().required(),
+            secret: Joi.boolean().required(),
+        })
+}), PluhController.patch)
+
+
 module.exports = routes
