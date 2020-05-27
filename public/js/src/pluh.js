@@ -25,10 +25,15 @@ class Pluh {
         this.btnOpenChat = $("#openChat");
         this.btnBack = $("#back");
         this.btnDelete = $("#delete");
+        this.btnConfig = $('#settings');
         this.btnSendMsg = $("#sendMsg");
-        this.sideA = $('.side-a')
-        this.footer = $('footer')
-        this.retry = $('.retry')
+        this.btnPlusUser = $("#plusUser");
+        this.nUsers = $("#nUsers");
+        this.sideA = $('.side-a');
+        this.footer = $('footer');
+        this.retry = $('.retry');
+        this.config = $('#config');
+        this.snackbar = $('#snackbar');
 
         //Objects
         this.api;
@@ -47,7 +52,7 @@ class Pluh {
             'The public is private.',
             'Your key is your brain.',
             'Mutual excludable.',
-            '/your_secret_Chat!'
+            'your_secret_Chat!'
         ]);
     }
 
@@ -60,6 +65,9 @@ class Pluh {
         this.btnSendMsg.click(e => this.aMsg(e));
         // this.chat.bind('DOMSubtreeModified', () => this.updateScroll());
         this.chat.scroll((e) => this.scrollUp(e));
+        this.btnConfig.click(() => this.openConfig());
+
+        this.btnPlusUser.click(() => this.addUser());
     }
 
     loading() {
@@ -134,6 +142,17 @@ class Pluh {
         }, 50);
     }
 
+    openConfig() {
+        pl.config.toggleClass("show")
+    }
+
+    addUser() {
+        let value = parseInt(this.nUsers.html());
+        if (value <= 51)
+            this.nUsers.html(++value)
+
+    }
+
     openChat(e) {
         if ((e.type == "click") || (e.type == "keypress" && e.which == 13)) {
             this.setAnimation(this.btnOpenChat, this.animationLogin);
@@ -147,8 +166,6 @@ class Pluh {
             }
         }
     }
-
-    showAt() { console.log('essa mrd', this.inputType); }
 
     userData() {
         return {
@@ -275,11 +292,21 @@ class Pluh {
         this.downScroll();
     }
 
+    showSnackbar(text) {
+        this.snackbar.html(text);
+        this.snackbar.addClass('show');
+        setTimeout(() => { this.snackbar.toggleClass("show"); }, 3000);
+    }
+
     structureMsg(msg, timestamp, type, icon) {
         let main = $('<p></p>')
             .addClass("message" + type)
             .html(msg)
-            .attr('id', '_' + this.hash(timestamp))
+            .attr('id', '_' + this.hash(timestamp));
+
+
+        let user = $('<span></span>')
+            .addClass("user");
 
         let time = $('<span></span>')
             .html(new Date(timestamp).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }).replace(' ', ''))
@@ -292,7 +319,7 @@ class Pluh {
             .append(time)
             .append(status)
 
-        return main.append(sub)
+        return main.append(sub).append(user)
     }
 
     plotUserMsg(msg) {
@@ -320,7 +347,6 @@ class Pluh {
             .css('-webkit-animation', animation);
     }
 
-
     scroll() {
         let scrollNow = this.chat.scrollTop()
         let scrollMax = this.chat[0].scrollHeight - this.chat[0].offsetHeight
@@ -332,7 +358,7 @@ class Pluh {
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
-        if(this.scroll().ratio < .2 && !this.requisiting){
+        if (this.scroll().ratio < .2 && !this.requisiting) {
             console.log(this.scroll().ratio);
             await this.getPlotMessages(10);
         }
