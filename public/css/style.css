@@ -158,7 +158,7 @@ html {
   grid-area: status;
 }
 
-.assets{
+.assets, .status  i{
   font-size: .7rem;
 }
 
@@ -183,7 +183,6 @@ html {
     "time"
   ;
 }
-
 
 .retry{
   position: relative;
