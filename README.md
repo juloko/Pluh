@@ -24,9 +24,9 @@
 -  Add favicon .ico;
 -  Add retry to send message;
 -  Catch from DB the last messages by scroll using page cursor;
+-  Add snackbar;
 -  <del>If user increase permit another user inside.<del>
 -  <del>Add pooling of messages;<del>
--  <del>Add snackbar;<del>
 -  <del>Add secret chat;<del>
 -  <del>If more than one in chat generate a random flat beauty color;<del>
 -  <del>Add logic to choice user A and B and more;<del>
