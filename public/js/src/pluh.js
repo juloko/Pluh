@@ -10,6 +10,8 @@ class Pluh {
         this.chatId;
         this.pageCursor = ""
         this.requisiting = false;
+        this.nUsers = 2;
+        this.secret = false;
         this.mobilecheck = this.mobileCheck()
 
         //DOM Objects:
@@ -28,12 +30,13 @@ class Pluh {
         this.btnConfig = $('#settings');
         this.btnSendMsg = $("#sendMsg");
         this.btnPlusUser = $("#plusUser");
-        this.nUsers = $("#nUsers");
+        this.textNumUsers = $("#nUsers");
+        this.btnSecret = $('#secret');
         this.sideA = $('.side-a');
         this.footer = $('footer');
         this.retry = $('.retry');
         this.config = $('#config');
-        this.snackbar = $('#snackbar');
+        this.consoleSnackback = $('#snackbar');
 
         //Objects
         this.api;
@@ -116,8 +119,7 @@ class Pluh {
         }
     }
 
-    async initOldMessages(chatId) {
-        this.chatId = chatId;
+    async initOldMessages() {
         await this.getPlotMessages(10);
         this.hideNameChatShowChat();
         this.downScroll();
@@ -127,7 +129,7 @@ class Pluh {
         const msgs = await this.getMessages(nMsgs);
         if (msgs) {
             msgs.forEach((ele) => {
-                this.plotReceivedMsg(ele.msg, ele.timestamp, 'A')
+                this.plotReceivedMsg(ele.msg, ele.timestamp, ele.userId)
             })
             this.downScroll();
         }
@@ -147,22 +149,31 @@ class Pluh {
     }
 
     addUser() {
-        let value = parseInt(this.nUsers.html());
+        let value = this.nUsers;
         if (value <= 51)
-            this.nUsers.html(++value)
+            this.textNumUsers.html(++value)
 
     }
 
-    openChat(e) {
+    initChatId() {
+        this.setAnimation(this.btnOpenChat, this.animationLogin);
+        this.chatId = this.inputChat.val();
+        if (this.chatId.replace(/ /g, '').length) {
+            return true
+        } else {
+            this.setAnimation(this.btnOpenChat, '');
+            this.setAnimation(this.inputChat, this.animationShake);
+            this.inputChat.val('').blur();
+            return false
+        }
+    }
+
+    async openChat(e) {
         if ((e.type == "click") || (e.type == "keypress" && e.which == 13)) {
-            this.setAnimation(this.btnOpenChat, this.animationLogin);
-            let chatId = this.inputChat.val();
-            if (chatId.replace(/ /g, '').length) {
-                this.initOldMessages(chatId);
-            } else {
-                this.setAnimation(this.btnOpenChat, '');
-                this.setAnimation(this.inputChat, this.animationShake);
-                this.inputChat.val('').blur();
+            if (this.initChatId()) {
+                const resp1 = await this.createSession();
+                this.initConfig();
+                const resp2 = await this.initOldMessages();
             }
         }
     }
@@ -216,7 +227,7 @@ class Pluh {
             let stringInfo = JSON.stringify(infoUser)
             let userId = this.hash(stringInfo);
             localStorage.setItem('userId', userId)
-            return userId;
+            return userId.toString()
         }
     }
 
@@ -247,7 +258,7 @@ class Pluh {
     }
 
     tryMsg(textMsg) {
-        let msgId = this.plotUserMsg(textMsg, 'A');
+        let msgId = this.plotInstantMsg(textMsg, 'A');
         this.postMessage(textMsg)
             .then((data) => {
                 if (!data.data[0].mutationResults[0].conflictDetected) {
@@ -264,7 +275,7 @@ class Pluh {
                     .append(retry);
 
                 $("#" + msgId)
-                    .css('box-shadow', '-4px 4px 4px #ff4aa68c, -4px -4px 4px #ffffff')
+                    .css('box-shadow', '-6px 6px 4px #ff4aa68c, -6px -6px 4px #ffffff')
                     .append(btn);
 
                 this.updateRetryListener();
@@ -292,45 +303,55 @@ class Pluh {
         this.downScroll();
     }
 
-    showSnackbar(text) {
-        this.snackbar.html(text);
-        this.snackbar.addClass('show');
-        setTimeout(() => { this.snackbar.toggleClass("show"); }, 3000);
+    snackbar(text) {
+        this.consoleSnackback.html(text);
+        this.consoleSnackback.addClass('show');
+        setTimeout(() => { this.consoleSnackback.toggleClass("show"); }, 3000);
     }
 
-    structureMsg(msg, timestamp, type, icon) {
+    structureMsg(msg, timestamp, type, userId, icon) {
         let main = $('<p></p>')
             .addClass("message" + type)
             .html(msg)
             .attr('id', '_' + this.hash(timestamp));
 
-
-        let user = $('<span></span>')
+        let user = $(`<span>@${this.users.indexOf(userId)}</span>`)
             .addClass("user");
 
         let time = $('<span></span>')
+            .addClass('time')
             .html(new Date(timestamp).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }).replace(' ', ''))
 
         let status = $('<i></i>')
-            .addClass(icon)
+            .addClass(icon);
 
-        let sub = $('<span></span>')
-            .addClass('timeMsg')
+        let aux = $('<span></span>')
+            .addClass('status')
+            .append(status);
+
+
+        let asssets = $('<span></span>')
+            .addClass('grid')
+            .addClass('assets')
+            .append(user)
             .append(time)
-            .append(status)
+            .append(aux);
 
-        return main.append(sub).append(user)
+
+        return main.append(asssets)
     }
 
-    plotUserMsg(msg) {
-        let objMessage = this.structureMsg(msg, new Date().toISOString(), 'A', 'fas fa-hourglass-start')
+    plotInstantMsg(msg) {
+        let objMessage = this.structureMsg(msg, new Date().toISOString(), 'A', this.userId, 'fas fa-hourglass-start')
         this.chat.append(objMessage)
         this.typeChat.html('').blur().focus();
         return objMessage.attr('id')
     }
 
-    plotReceivedMsg(msg, timestamp, type) {
-        let objMessage = this.structureMsg(msg, timestamp, type, '')
+    plotReceivedMsg(msg, timestamp, user) {
+        let type;
+        user == this.userId ? type = 'A' : type = 'B'
+        let objMessage = this.structureMsg(msg, timestamp, type, user, '')
         this.chat.html() ? this.chat.children().eq(0).before(objMessage) : this.chat.append(objMessage);
     }
 
@@ -414,6 +435,45 @@ class Pluh {
         })
     }
 
+    initConfig() {
+        this.textNumUsers.html(this.nUsers)
+        this.btnSecret.prop('checked', this.secret)
+    }
+
+    async createSession() {
+        const resp = await this.getSession();
+        this.nUsers = resp.nUsers;
+        this.users = resp.users;
+        this.secret = resp.secret;
+    }
+
+    async  getSession() {
+        try {
+            if (!this.requisiting) {
+                this.setRequisiting(true)
+                let resp = await this.api.post('/session', {
+                    "chatId": this.chatId,
+                    "userId": this.userId
+                });
+                if (resp.data.nUsers) {
+                    this.setRequisiting(false);
+                    return resp.data;
+                } if (resp.data.code == 13) {
+                    await this.delay(2);
+                    this.setRequisiting(false);
+                    return await this.getSession();
+                } else {
+                    this.setRequisiting(false)
+                    this.snackbar("Unexpected error");
+                    return;
+                }
+            }
+        } catch (error) {
+            this.setRequisiting(false)
+            this.snackbar(error);
+        }
+    }
+
     async  getMessages(nMsgs) {
         try {
             if (!this.requisiting) {
@@ -428,7 +488,7 @@ class Pluh {
                 if (msgs.data[1]) {
                     if (msgs.data[1].moreResults == "NO_MORE_RESULTS") {
                         this.setRequisiting(false);
-                        return;
+                        return msgs.data[0];
                     } else {
                         this.setRequisiting(false);
                         this.pageCursor = msgs.data[1].endCursor;
@@ -437,15 +497,17 @@ class Pluh {
                 } else if (msgs.data.code == 13) {
                     await this.delay(2);
                     this.setRequisiting(false);
-                    return await this.getMessages(nMsgs);
+                    const request = await this.getMessages(nMsgs);
+                    return request;
                 } else {
                     this.setRequisiting(false)
-                    alert("Unexpected error");
+                    this.snackbar("Unexpected error");
                     return;
                 }
             }
         } catch (error) {
             this.setRequisiting(false)
+            this.snackbar(error);
         }
     }
 }

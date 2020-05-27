@@ -13,7 +13,6 @@ module.exports = {
         const { chatId, userId, msg, timestamp = new Date() } = req.body;
         //Bundle information.
         let bundle = {
-            chatId,
             userId,
             msg,
             timestamp,
@@ -61,10 +60,22 @@ module.exports = {
     async delete(req, res, next) {
         const { chatId } = req.query
         try {
-            const response = await datastore.save({
-                key: datastore.key(['Delete', chatId]),
-                data: { 'timestamp': new Date() },
-            });
+            const response = await datastore.upsert([
+                {
+                    key: datastore.key(['Data', chatId]),
+                    data: {
+                        nUsers: 2,
+                        users: [],
+                        secret: false,
+                    },
+                },
+                {
+                    key: datastore.key(['Delete', chatId]),
+                    data: {
+                        'timestamp': new Date()
+                    },
+                },
+            ]);
 
             res.send(response)
         } catch (err) {
@@ -73,4 +84,47 @@ module.exports = {
         }
     },
 
+    async session(req, res, next) {
+        const { userId, chatId } = req.body;
+
+        try {
+            const [resp] = await datastore.get(datastore.key(['Data', chatId]))
+            if (!resp) {
+                const bundle = {
+                    nUsers: 2,
+                    users: [userId],
+                    secret: false,
+                }
+
+                await datastore.save({
+                    key: datastore.key(['Data', chatId]),
+                    data: bundle,
+                });
+
+                return res.send(bundle)
+            } else if (resp.users.includes(userId)) {
+
+                return res.send(resp)
+            }
+            else if (resp.users.length < resp.nUsers) {
+                const bundle = resp;
+                bundle.users.push(userId)
+
+                await datastore.save({
+                    key: datastore.key(['Data', chatId]),
+                    data: bundle,
+                });
+
+                return res.send(bundle)
+            } else {
+                res.status(400).send({
+                    message: 'Forbidden Access to this chat! Thy create another one, or comeback to last device that you used to enter.!'
+                })
+            }
+        } catch (err) {
+            console.error('ERROR:', err);
+            res.send(err)
+        }
+    },
 }
+

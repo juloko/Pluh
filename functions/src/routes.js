@@ -8,17 +8,25 @@ const routes = express.Router()
 routes.post("/pluh", celebrate({
     [Segments.BODY]:
         Joi.object().keys({
-            chatId: Joi.string().required(),
+            chatId: Joi.string().invalid(...['Delete','Data']).required(),
             userId: Joi.string().required(),
             msg: Joi.string().required()
         })
 }), PluhController.create)
 
+routes.post("/session", celebrate({
+    [Segments.BODY]:
+        Joi.object().keys({
+            chatId: Joi.string().invalid(...['Delete','Data']).required(),
+            userId: Joi.string().required(),
+        })
+}), PluhController.session)
+
 routes.get("/pluh", celebrate({
     [Segments.QUERY]:
         Joi.object().keys({
             pageCursor: Joi.string().allow(''),
-            chatId: Joi.string().required(),
+            chatId: Joi.string().invalid(...['Delete','Data']).required(),
             nMsgs: Joi.string().required(),
         })
 }), PluhController.index)
