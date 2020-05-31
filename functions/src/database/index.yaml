@@ -13,4 +13,9 @@ indexes:
     - name: chatId
     - name: timestamp
       direction: desc
+      
+- kind: Data
+  properties:
+    - name: __key__
+    - name: users
   

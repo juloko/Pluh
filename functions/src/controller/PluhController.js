@@ -11,22 +11,30 @@ module.exports = {
     async create(req, res, next) {
         //Get from user.
         const { chatId, userId, msg, timestamp = new Date() } = req.body;
-        //Bundle information.
-        let bundle = {
-            userId,
-            msg,
-            timestamp,
-        }
-
         try {
-            const response = await datastore.save({
-                key: datastore.key([chatId]),
-                data: bundle,
-                excludeFromIndexes: [
-                    'msg'
-                ]
-            });
-            res.send(response)
+            const [resp] = await datastore.get(datastore.key(['Data', chatId]));
+
+            if (!resp.users.includes( userId)) {
+                throw res.status(403).send({
+                    message: "Forbidden Access!"
+                })
+            } else {
+                //Bundle information.
+                let bundle = {
+                    userId,
+                    msg,
+                    timestamp,
+                }
+
+                const response = await datastore.save({
+                    key: datastore.key([chatId]),
+                    data: bundle,
+                    excludeFromIndexes: [
+                        'msg'
+                    ]
+                });
+                res.send(response)
+            }
         } catch (err) {
             console.error('ERROR:', err);
             res.send(err)
@@ -34,23 +42,28 @@ module.exports = {
     },
 
     async index(req, res, next) {
-        const { pageCursor, chatId, nMsgs } = req.query;
+        const { pageCursor, chatId, nMsgs, userId } = req.query;
+
         try {
-            const [resp] = await datastore.get(datastore.key(['Delete', chatId]));
-            let timestamp
-            resp ? timestamp = resp.timestamp : timestamp = new Date('1990-01-01T00:00:00z')
-
-            const query = datastore.createQuery(chatId)
-                .start(pageCursor)
-                .order('timestamp', {
-                    descending: true,
+            const [resp] = await datastore.get(datastore.key(['Data', chatId]))
+            if (!resp.users.includes(userId)) {
+                throw res.status(403).send({
+                    message: "Forbidden Access!"
                 })
-                .filter('timestamp', '>', timestamp)
-                .limit(nMsgs)
+            } else {
+                let deleted
+                resp.deleted ? deleted = resp.deleted : deleted = new Date('1990-01-01T00:00:00z')
 
-            const response = await datastore.runQuery(query);
-            res.header('Accept-Datetime', timestamp);
-            res.send(response)
+                const query = datastore.createQuery(chatId)
+                    .start(pageCursor)
+                    .order('timestamp', {
+                        descending: true,
+                    })
+                    .filter('timestamp', '>', deleted)
+                    .limit(nMsgs)
+                const response = await datastore.runQuery(query);
+                res.send(response)
+            }
         } catch (err) {
             console.error('ERROR:', err);
             res.send(err)
@@ -58,21 +71,23 @@ module.exports = {
     },
 
     async delete(req, res, next) {
-        const { chatId } = req.query
+        const { chatId, userId } = req.query
         try {
+            const [resp] = await datastore.get(datastore.key(['Data', chatId]))
+
+            if (!resp.users.includes(userId)) {
+                throw res.status(403).send({
+                    message: "Forbidden Access!"
+                })
+            }
             const response = await datastore.upsert([
                 {
                     key: datastore.key(['Data', chatId]),
                     data: {
+                        deleted: new Date(),
                         nUsers: 2,
                         users: [],
                         secret: false,
-                    },
-                },
-                {
-                    key: datastore.key(['Delete', chatId]),
-                    data: {
-                        'timestamp': new Date()
                     },
                 },
             ]);
@@ -86,41 +101,45 @@ module.exports = {
 
     async session(req, res, next) {
         const { userId, chatId } = req.body;
-
+        const bundle = {
+            nUsers: 2,
+            users: [userId],
+            secret: false,
+        }
         try {
             const [resp] = await datastore.get(datastore.key(['Data', chatId]))
             if (!resp) {
-                const bundle = {
-                    nUsers: 2,
-                    users: [userId],
-                    secret: false,
+                await datastore.save({
+                    key: datastore.key(['Data', chatId]),
+                    data: bundle,
+                });
+
+                return res.send(bundle)
+            } else if (resp.users) {
+                if (resp.users.includes(userId)) {
+
+                    return res.send(resp)
                 }
+                else if (resp.users.length < resp.nUsers) {
+                    const bundle = resp;
+                    bundle.users.push(userId)
 
-                await datastore.save({
-                    key: datastore.key(['Data', chatId]),
-                    data: bundle,
-                });
+                    await datastore.save({
+                        key: datastore.key(['Data', chatId]),
+                        data: bundle,
+                    });
 
-                return res.send(bundle)
-            } else if (resp.users.includes(userId)) {
-
-                return res.send(resp)
-            }
-            else if (resp.users.length < resp.nUsers) {
-                const bundle = resp;
-                bundle.users.push(userId)
-
-                await datastore.save({
-                    key: datastore.key(['Data', chatId]),
-                    data: bundle,
-                });
-
-                return res.send(bundle)
+                    return res.send(bundle)
+                }
+                else {
+                    res.status(403).send({
+                        message: 'Forbidden Access to this chat! Thy create another one, or comeback to last device that you used to enter.!'
+                    })
+                }
             } else {
-                res.status(400).send({
-                    message: 'Forbidden Access to this chat! Thy create another one, or comeback to last device that you used to enter.!'
-                })
+                return res.send(bundle)
             }
+
         } catch (err) {
             console.error('ERROR:', err);
             res.send(err)
@@ -128,24 +147,35 @@ module.exports = {
     },
 
     async patch(req, res, next) {
-        const {chatId, nUsers, secret } = req.query
+        const { chatId, nUsers, userId, secret } = req.body
         try {
-            const response = await datastore.save([
-                {
-                    key: datastore.key(['Data', chatId]),
-                    data: {
-                        nUsers,
-                        secret,
-                    },
-                }
-            ]);
+            const [resp] = await datastore.get(datastore.key(['Data', chatId]))
+            if (resp.nUsers > nUsers) {
+                throw res.status(403).send({
+                    message: "Forbidden Access! You can't decrease the number of users."
+                })
+            } else if (!resp.users.includes(userId)) {
+                throw res.status(403).send({
+                    message: "Forbidden Access!"
+                })
+            }
+            else {
+                const response = await datastore.merge([
+                    {
+                        key: datastore.key(['Data', chatId]),
+                        data: {
+                            nUsers,
+                            secret,
+                        },
+                    }
+                ]);
 
-            res.send(response)
+                res.send(response)
+            }
         } catch (err) {
             console.error('ERROR:', err);
             res.send(err)
         }
     },
-
 }
 

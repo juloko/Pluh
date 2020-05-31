@@ -145,6 +145,7 @@ html {
 .user{
   grid-area: user;
   color: hsla(203, 94%, 61%, 1);
+  font-weight: 600;
 }
 
 .time{
@@ -182,18 +183,6 @@ html {
     "user"
     "time"
   ;
-}
-
-.retry{
-  position: relative;
-  left: 4rem;
-  font-size: 1rem;
-  color: var(--quintanary-color) !important;
-}
-
-.retry:hover{
-  animation: 1s cubic-bezier(0.3, 0.3, 0.5, 0.5)  infinite  forwards running  spin;
-  color:var(--sextenary-color)
 }
 
 body{
@@ -552,8 +541,8 @@ p.messageA{
   display:flex;
   float: right;
   border-radius: 1rem 1rem 0rem 1rem;
-  background-color: #fa4090;
-  box-shadow:  4px 4px 4px #eebed4, -0px -0px 0px #ff4aa6;
+  background-color: #49a2ff;;
+  box-shadow:  4px 4px 4px #e4e2e2, -0px -0px 0px #ffffff;
 }
 
 #chat p.messageA{

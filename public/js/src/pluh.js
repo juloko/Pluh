@@ -72,8 +72,9 @@ class Pluh {
         // this.chat.bind('DOMSubtreeModified', () => this.updateScroll());
         this.chat.scroll((e) => this.scrollUp(e));
         this.btnConfig.click(() => this.openConfig());
-
         this.btnPlusUser.click(() => this.addUser());
+        this.btnSecret.finish().click(() => this.changeSecret());
+
     }
 
     loading() {
@@ -96,7 +97,6 @@ class Pluh {
             onComplete: () => { setTimeout(() => this.typed(place, strings), 5000) }
         })
     }
-
     async verifyMode() {
         try {
             const response = await axios({
@@ -148,14 +148,20 @@ class Pluh {
     }
 
     openConfig() {
-        pl.config.toggleClass("show")
+        this.config.toggleClass("show")
     }
 
-    addUser() {
-        let value = this.nUsers;
-        if (value <= 51)
-            this.textNumUsers.html(++value)
+    async addUser() {
+        if (this.nUsers < 50) {
+            this.textNumUsers.html(++this.nUsers);
+            await this.setConfig();
+        }
+    }
 
+    async changeSecret() {
+        this.secret = !this.secret;
+        this.btnSecret.prop('checked', this.secret);
+        await this.setConfig();
     }
 
     initChatId() {
@@ -243,6 +249,7 @@ class Pluh {
         this.setAnimation(this.btnOpenChat, '');
         this.setRequisiting(false);
         this.setEndMsgs(false);
+        this.clearPageCursor()
     }
 
     delete() {
@@ -272,16 +279,11 @@ class Pluh {
                     throw Error(data);
                 }
             }).catch(() => {
-                let retry = $('<i></i>')
-                    .addClass('retry')
-                    .addClass('fas fa-undo-alt');
-
-                let btn = $('<button></button>')
-                    .append(retry);
-
                 $("#" + msgId)
-                    .css('box-shadow', '-6px 6px 4px #ff4aa68c, -6px -6px 4px #ffffff')
-                    .append(btn);
+                    .addClass('retry')
+                    .css('background-color', '#ff0072')
+                    .find('i').removeClass("fas fa-hourglass-start").addClass("fas fa-exclamation");
+
 
                 this.updateRetryListener();
             })
@@ -301,7 +303,7 @@ class Pluh {
     reSendMsg(e) {
         e.stopPropagation();
         e.stopImmediatePropagation();
-        let id = e.originalEvent.path[2].getAttribute('id');
+        let id = e.originalEvent.path[0].getAttribute('id');
         let textMsg = $('#' + id).contents().first().text();
         $('#' + id).remove();
         this.tryMsg(textMsg)
@@ -337,14 +339,12 @@ class Pluh {
             .addClass('status')
             .append(status);
 
-
         let asssets = $('<span></span>')
             .addClass('grid')
             .addClass('assets')
             .append(user)
             .append(time)
             .append(aux);
-
 
         return main.append(asssets)
     }
@@ -407,28 +407,16 @@ class Pluh {
         })
     }
 
-    async postMessage(msg) {
-        return await this.api.post('/pluh', {
-            "chatId": this.chatId,
-            "userId": this.userId,
-            msg
-        });
-    }
-
-    async deleteMessage() {
-        return await this.api.delete('/pluh', {
-            params: {
-                'chatId': this.chatId,
-            }
-        });
-    }
-
     setRequisiting(status) {
         this.requisiting = status;
     }
 
     setEndMsgs(status) {
-        this.requisiting = status;
+        this.endMsgs = status;
+    }
+    
+    clearPageCursor(){
+        this.pageCursor = "";
     }
 
     mobileCheck() {
@@ -447,8 +435,11 @@ class Pluh {
 
     randomArrayFlatColor(length) {
         let flatColors = [];
-        for (let length = 0; length < 100000; length++) {
-            let hue = Math.trunc(Math.random() * 359 + 5);
+        let hue;
+        for (let index = 0; index < length; index++) {
+            do {
+                hue = Math.trunc(Math.random() * 359 + 5);
+            } while (100> hue > 30);
             if (hue > 359)
                 hue -= 359;
             flatColors.push(`hsla(${hue}, 94%, 61%, 1)`);
@@ -466,7 +457,55 @@ class Pluh {
         this.nUsers = resp.nUsers;
         this.users = resp.users;
         this.secret = resp.secret;
-        this.userCollors = this.randomArrayFlatColor(this.users.length)
+        this.userCollors = this.randomArrayFlatColor(this.nUsers)
+    }
+
+    async deleteMessage() {
+        let resp = await this.api.delete('/pluh', {
+            'chatId': this.chatId,
+            'userId': this.userId,
+        });
+        if (resp.data.code == 13) {
+            await this.delay(2);
+            return await this.deleteMessage();
+        }
+    }
+
+    async  setConfig() {
+        try {
+            if (!this.requisiting) {
+                this.setRequisiting(true)
+                let resp = await this.api.patch('/pluh', {
+                    "chatId": this.chatId,
+                    "nUsers": this.nUsers,
+                    "secret": this.secret,
+                    "userId": this.userId
+                });
+                if (resp.data[0].mutationResults) {
+                    this.setRequisiting(false);
+                    return resp.data;
+                } else if (resp.data.code == 13) {
+                    await this.delay(2);
+                    this.setRequisiting(false);
+                    return await this.getSession();
+                } else {
+                    this.setRequisiting(false)
+                    this.snackbar("Unexpected error");
+                    return;
+                }
+            }
+        } catch (error) {
+            this.setRequisiting(false)
+            this.snackbar(error);
+        }
+    }
+
+    async postMessage(msg) {
+        return await this.api.post('/pluh', {
+            "chatId": this.chatId,
+            "userId": this.userId,
+            msg
+        });
     }
 
     async  getSession() {
@@ -476,15 +515,17 @@ class Pluh {
                 let resp = await this.api.post('/session', {
                     "chatId": this.chatId,
                     "userId": this.userId
-                });
+                })
                 if (resp.data.nUsers) {
                     this.setRequisiting(false);
                     return resp.data;
-                } if (resp.data.code == 13) {
+                }
+                else if (resp.data.code == 13) {
                     await this.delay(2);
                     this.setRequisiting(false);
                     return await this.getSession();
-                } else {
+                }
+                else {
                     this.setRequisiting(false)
                     this.snackbar("Unexpected error");
                     return;
@@ -504,6 +545,7 @@ class Pluh {
                     params: {
                         "pageCursor": this.pageCursor,
                         "chatId": this.chatId,
+                        "userId": this.userId,
                         nMsgs
                     }
                 })

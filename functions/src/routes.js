@@ -8,43 +8,47 @@ const routes = express.Router()
 routes.post("/pluh", celebrate({
     [Segments.BODY]:
         Joi.object().keys({
-            chatId: Joi.string().invalid(...['Delete','Data']).required(),
-            userId: Joi.string().required(),
-            msg: Joi.string().required()
+            'chatId': Joi.string().invalid(...['Delete','Data']).required(),
+            'userId': Joi.string().required(),
+            'msg': Joi.string().required(),
+            'userId': Joi.string().required()
         })
 }), PluhController.create)
 
 routes.post("/session", celebrate({
     [Segments.BODY]:
         Joi.object().keys({
-            chatId: Joi.string().invalid(...['Delete','Data']).required(),
-            userId: Joi.string().required(),
+            'chatId': Joi.string().invalid(...['Delete','Data']).required(),
+            'userId': Joi.string().required()
         })
 }), PluhController.session)
 
 routes.get("/pluh", celebrate({
     [Segments.QUERY]:
         Joi.object().keys({
-            pageCursor: Joi.string().allow(''),
-            chatId: Joi.string().invalid(...['Delete','Data']).required(),
-            nMsgs: Joi.string().required(),
+            'pageCursor': Joi.string().allow(''),
+            'chatId': Joi.string().invalid(...['Delete','Data']).required(),
+            'nMsgs': Joi.string().required(),
+            'userId': Joi.string().required()
         })
 }), PluhController.index)
 
 routes.delete("/pluh", celebrate({
     [Segments.QUERY]:
         Joi.object().keys({
-            chatId: Joi.string().required(),
+            'chatId': Joi.string().required(),
+            'userId': Joi.string().required()
         })
 }), PluhController.delete)
 
 
 routes.patch("/pluh", celebrate({
-    [Segments.QUERY]:
+    [Segments.BODY]:
         Joi.object().keys({
-            chatId: Joi.string().required(),
-            nUsers: Joi.number().required(),
-            secret: Joi.boolean().required(),
+            'chatId': Joi.string().required(),
+            'nUsers': Joi.number().min(2).max(50).required(),
+            'secret': Joi.boolean().required(),
+            'userId': Joi.string().required()
         })
 }), PluhController.patch)
 
